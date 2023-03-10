@@ -40,7 +40,7 @@ def stock_automate(txt):
             f.write(f"{Oldline}\n")
 
 
-# Fonction permettant de récupérer les informations du fichier voulu
+# Fonction permettant de retourner les informations du fichier voulu
 def lire_fichier(x):
     #Définission de la variable fichier en fonction du numéro de l'automate saisie
     fichier = ""
@@ -64,11 +64,31 @@ def liste_symbs_function(a):
 
     return liste_symbs
 
-# Fonction permettant de récupérer la liste des états (a = nb états)
+# Fonction permettant de retourner la liste des états (a = nb états)
 def liste_etats_function(a):
-    print(a)
     liste_etats = []
     for i in range(0, int(a)):
         liste_etats.append(i)
 
     return liste_etats
+
+#Fonction permettant de couper la ligne des états INITIAUX/TERMINAUX pour ne retourner qu'une liste des états INITIAUX/TERMINAUX
+def cutline_liste_etats(nb_etats, line):
+
+    # Liste etats
+    liste_etats = []
+
+    print("")
+    # Calcul l'indice maximale par rapport au nombre d'états)
+    indice_max = 2*int(nb_etats)
+
+    # Boucle permettant d'ajouter à la liste des états qu'on veut
+    for i in range(2, indice_max+2, 2):
+            liste_etats.append(line[i])
+
+    return liste_etats
+
+
+
+#Fonction permettant de retourner les états TERMINAUX
+#def liste_etats_terminaux():

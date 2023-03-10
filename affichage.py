@@ -15,32 +15,36 @@ def print_main_menu():
 def exec_ch_main(ch):
     if ch == 1:
 
+        #---------------------------------------------------------------RECUPERATION DES INFORMATIONS DE L'AUTOMATE SOUS FORME DE VARIABLES ET LISTES----------------------------------------------------------------
         # Liste contenant chaque ligne par indice
         liste_lignes = lire_fichier(1)
-        nb_indices_lignes = len(liste_lignes)
-
-        # Permet de visualiser les valeurs de la liste
-        """
-        for i in range(0, nb):
-            print(liste[i])
-        """
+        nb_lignes = len(liste_lignes)
 
         # Permet d'obtenir la liste des symboles de l'automate
-        nb_symbs = liste_lignes[0]
-        liste_symbs = liste_symbs_function(nb_symbs)
+        nb_symbs = liste_lignes[0]                                                                  # NB SYMBOLES
+        liste_symbs = liste_symbs_function(nb_symbs)                                                # LISTE DES SYMBOLES (ALPHABET) DE L'AUTOMATE
 
         # Permet d'obtenir la liste des états
-        nb_etats = liste_lignes[1]
-        liste_etats = liste_etats_function(nb_etats)
+        nb_etats = liste_lignes[1]                                                                  # NB ETATS
+        liste_etats = liste_etats_function(nb_etats)                                                # LISTE DES ETATS (de 0 à n) DE L'AUTOMATE
 
-        nb_etats_init = liste_lignes[2]
-        nb_etats_term = liste_lignes[3]
-        nb_trans = liste_lignes[4]
+        # Liste contenant la ligne des nb et etats initiaux (line initiaux est une liste)
+        line_initiaux = liste_lignes[2]
+        nb_etats_initiaux = line_initiaux[0]                                                         # NB ETATS INITIAUX
+        liste_etats_initiaux = cutline_liste_etats(nb_etats_initiaux, line_initiaux)                 # LISTE DES ETATS INITIAUX
+
+        # Liste contenant la ligne des nb et etats initiaux (line initiaux est une liste)
+        line_terminaux = liste_lignes[3]
+        nb_etats_terminaux = line_terminaux[0]                                                      # NB ETATS TERMINAUX
+        liste_etats_initiaux = cutline_liste_etats(nb_etats_terminaux, line_terminaux)              # LISTE DES ETATS TERMINAUX
 
         # Création d'une liste contenant seulement les transitions de l'automate
         liste_trans = []
-        for i in range(5, nb_indices_lignes):
+        for i in range(5, nb_lignes):                                                               # LISTE TRANSITIONS
             liste_trans.append(liste_lignes[i])
+
+        nb_trans = len(liste_trans)                                                                 # NB TRANSITIONS
+        #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         # elif ch == 2 :
         quit()
