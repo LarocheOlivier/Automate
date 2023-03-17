@@ -88,7 +88,71 @@ def cutline_liste_etats(nb_etats, line):
 
     return liste_etats
 
+#Fonction permettant de retourner la liste des états terminaux ET initiaux
+def liste_init_and_term(liste_init, liste_term):
+
+    liste_init_term = []
+    for x in liste_init:
+        if x in liste_term:
+            liste_init_term.append(x)
+
+    return liste_init_term
 
 
-#Fonction permettant de retourner les états TERMINAUX
-#def liste_etats_terminaux():
+#Fonction retournant la liste des états seulement initiaux/terminaux
+def only_init_or_term(liste_init_or_term, liste_term_and_init):
+
+    liste_only_init_or_term = []
+    liste_init_or_term = set(liste_init_or_term)
+    liste_term_and_init = set(liste_term_and_init)
+
+    # Retourne une liste composé des états seulement init/term (différence avec la liste contenant les états init ET term
+    liste_only_init_or_term = list(liste_init_or_term - liste_term_and_init)
+
+    return liste_only_init_or_term
+
+# Fonction permettant de retourner la liste de la ligne d'un automate pour l'AFFICHAGE (tout bien)
+def make_ligne(i,nb_symb,nb_trans,liste_trans,liste_term,liste_init,liste_init_term):
+    # Créer une liste contenant le bon nombre d'indice pour la ligne
+    ligne = [" "] * int(nb_symb+1)
+    # Boucle permettant de parcourir tous les caractères de toutes les transitions
+    for a in range(0, nb_trans):
+        # Si le premier caractère correspond à l'état i, alors ajouter l'état correspondant à la transition
+        if int(liste_trans[a][0]) == i:
+            # Donne l'indice correspondant à la lettre de la transition pour la ligne
+            ind = ord(liste_trans[a][1]) - 96
+            # Si l'élément de l'indice est déjà rempli par un état, alors ajouter le caractère
+            if ligne[ind] != " ":
+                chaine = ligne[ind]
+                chaine = chaine + liste_trans[a][2]
+                ligne[ind] = chaine
+            # Sinon, initialiser la valeur à l'indice correspondant de la liste de la ligne
+            else:
+                ligne[ind] = liste_trans[a][2]
+    #Permet d'ajouter la/les bonnes lettres à l'état, initial, terminal ou les deux
+    #Permet d'initialiser le première indice à l'état associer avec la lettre
+    ligne[0] = add_letters(i, liste_term, liste_init, liste_init_term) + str(i)
+
+    #S'il n'y a pas de transitions à une case dans la ligne (pas de transitions), alors on met un tiret
+    for u in range(len(ligne)):
+        if ligne[u] == " ":
+            ligne[u] = "-"
+
+    return ligne
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------
+#Fonction permettant d'ajouter la/les lettres correspondantes aux éléments d'une liste s'il s'agit d'une entrée, sortie ou les deux
+def add_letters(i,liste_term,liste_init,liste_init_term):
+    chaine = ""
+    for k in range(0, len(liste_init)):
+        if int(liste_init[k]) == i:
+            chaine = "E-"
+    for k in range(0, len(liste_term)):
+        if int(liste_term[k]) == i:
+            chaine = "S-"
+    for k in range(0, len(liste_init_term)):
+        if int(liste_init_term[k]) == i:
+            chaine = "S-E-"
+
+    return chaine
+#---------------------------------------------------------------------------------------------------------------------

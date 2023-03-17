@@ -10,12 +10,56 @@ def print_main_menu():
     print("==================================================================")
     print("Nous vous proposons une liste de 8 automates finis !\n\nQuel automate souhaitez-vous utiliser ?")
 
+#------------------------------------------------------------------------------------------------------------------------------------FONCTION D'AFFICHAGE D'AUTOMATES-------------------------------------------------------------------------------------------
+
+#Fonction affichant la première ligne du tableau, soit la liste des symboles
+def print_symb_line(liste_symb):
+    nb_symb = len(liste_symb)  # NB SYMBOLES
+    print("         ", end=" ")
+    space = 13 * nb_symb + 1
+    print(space * "-")
+    print("         ", end=" ")
+    for i in range(0, nb_symb):
+        print("|    ", end=" ")
+        print(liste_symb[i], end=" ")
+        print("    ", end=" ")
+    print("|")
+    print("----------+", end="")
+    print((space-1) * "-")
+
+# Fonction permettant d'afficher les automates sous forme de tableau
+def print_automate(liste_symb, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats):
+
+    # Affiche la ligne des symboles
+    print_symb_line(liste_symb)
+
+    #Nombre
+    nb_symb = len(liste_symb)
+    nb_trans = len(liste_trans)
+
+    #Liste des états initiaux ET terminaux
+    liste_init_term = liste_init_and_term(liste_etats_initiaux, liste_etats_terminaux)
+
+    #Liste contenant les états seulement initiaux
+    liste_init = only_init_or_term(liste_etats_initiaux, liste_init_term)
+
+    #Liste contenant les états seulement terminaux
+    liste_term = only_init_or_term(liste_etats_terminaux, liste_init_term)
+
+    # Boucle permettant de créer le bon nombre de ligne et la ligne correspondante à l'état
+    for i in range(0, int(nb_etats)):
+        ligne = make_ligne(i, nb_symb, nb_trans, liste_trans,liste_term,liste_init,liste_init_term)
+        for y in range(len(ligne)):
+            print(ligne[y], end=" ")
+        print("\n------------------------------------------\n")
+
+#------------------------------------------------------------------------------------------------------------------------------------QUEL AUTOMATE ILS VEULENT TRAVAILLER---------------------------------------------------------------------------------------
 
 # Fonction permettant de procéder à la lecture du fichier concerné
 def exec_ch_main(ch):
     if ch == 1:
 
-        #---------------------------------------------------------------RECUPERATION DES INFORMATIONS DE L'AUTOMATE SOUS FORME DE VARIABLES ET LISTES----------------------------------------------------------------
+        #----------------------------------------RECUPERATION DES INFORMATIONS DE L'AUTOMATE SOUS FORME DE VARIABLES ET LISTES----------------------------
         # Liste contenant chaque ligne par indice
         liste_lignes = lire_fichier(1)
         nb_lignes = len(liste_lignes)
@@ -36,7 +80,7 @@ def exec_ch_main(ch):
         # Liste contenant la ligne des nb et etats initiaux (line initiaux est une liste)
         line_terminaux = liste_lignes[3]
         nb_etats_terminaux = line_terminaux[0]                                                      # NB ETATS TERMINAUX
-        liste_etats_initiaux = cutline_liste_etats(nb_etats_terminaux, line_terminaux)              # LISTE DES ETATS TERMINAUX
+        liste_etats_terminaux= cutline_liste_etats(nb_etats_terminaux, line_terminaux)              # LISTE DES ETATS TERMINAUX
 
         # Création d'une liste contenant seulement les transitions de l'automate
         liste_trans = []
@@ -44,7 +88,10 @@ def exec_ch_main(ch):
             liste_trans.append(liste_lignes[i])
 
         nb_trans = len(liste_trans)                                                                 # NB TRANSITIONS
-        #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        #----------------------------------------------------------AFFICHAGE-----------------------------------------------------------------------
+        print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
+
 
         # elif ch == 2 :
         quit()
