@@ -132,9 +132,24 @@ def exec_ch_main(ch):
 
         nb_trans = len(liste_trans)                                                                 # NB TRANSITIONS
 
-        #----------------------------------------------------------AFFICHAGE-----------------------------------------------------------------------
+        #-------------------------AFFICHAGE DE L'AUTOMATE----------------------------------------------
         print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
 
+        #---------------------------Complémentarisation------------------------------------------------
+
+        # Faire la vérification si déterministe et complet
+
+        # COMPLEMENTARISATION DE L'AUTOMATE ET AFFICHAGE
+        # Retourne la liste des états terminaux
+
+        print("Complémentarisation :\n")
+        # La liste des états initiaux est sous forme de string et nom de int,
+        # la fonction map convertit celle-ci
+        liste_etats_initiaux = list(map(int, liste_etats_initiaux))
+        liste_etats_terminaux = complementarisation(liste_etats_terminaux, liste_etats)
+        print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
+
+        #----------------------------------------------------------------------------------------------
 
         # elif ch == 2 :
         quit()
