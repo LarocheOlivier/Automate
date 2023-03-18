@@ -27,6 +27,23 @@ def protect_choix(nbch):
             print(ROUGE + "Vous devez mettre un choix valable : " + RES)
     return ch
 
+#Fonction qui renvoie un nombre, 0 si le nombre entré est pair et 1 si le nombre entré est impair
+def pair_impair(nb):
+    x = 3
+    if nb % 2 == 0:
+        x = 0
+    else:
+        x = 1
+
+    return x
+
+# Fonction qui renvoie le nombre de caractères d'une chaine de caractère
+def count_char_str(str):
+    nb = 0
+    for i in range(0,len(str)):
+        nb += 1
+
+    return nb
 
 # Permet d'ouvrir et d'enregistrer chaque automate contenu dans les fichiers
 def stock_automate(txt):

@@ -13,25 +13,60 @@ def print_main_menu():
 #------------------------------------------------------------------------------------------------------------------------------------FONCTION D'AFFICHAGE D'AUTOMATES-------------------------------------------------------------------------------------------
 
 #Fonction affichant la première ligne du tableau, soit la liste des symboles
-def print_symb_line(liste_symb):
+def print_symb_line(liste_symb,nb_etat):
     nb_symb = len(liste_symb)  # NB SYMBOLES
-    print("         ", end=" ")
-    space = 13 * nb_symb + 1
-    print(space * "-")
-    print("         ", end=" ")
+    char_espace = " "
+    char_tiret = "-"
+
+    # Si x = 1, nombre impair sinon pair
+    x = pair_impair(int(nb_etat))
+    # Liste des espaces
+    liste_space = []
+
+    space_av = 0
+    space_ap = 0
+    if x == 1:
+        space_av = int((int(nb_etat) / 2 - 0.5) + 2)
+        space_ap = int((int(nb_etat) / 2 - 0.5) + 2)
+    else:
+        space_av = int(int(nb_etat) / 2)
+        space_ap = int((int(nb_etat) / 2) + 2)
+    space_total = space_av + space_ap + 1
+    liste_space.append(space_av)
+    liste_space.append(space_ap)
+    liste_space.append(space_total)
+
+    ligne_rest = int((space_av + space_ap + 4) * nb_symb + 1) * char_tiret
+    # Trait 1
+    print(int((space_av + space_ap + 3)) * char_espace, end=" ")
+    print(ligne_rest)
+    print(int((space_av + space_ap + 3)) * char_espace,end=" ")
+
     for i in range(0, nb_symb):
-        print("|    ", end=" ")
+        print("|", end=" ")
+        print((liste_space[0] - 1) * char_espace, end=" ")
         print(liste_symb[i], end=" ")
-        print("    ", end=" ")
+        print((liste_space[1] - 1) * char_espace, end=" ")
     print("|")
-    print("----------+", end="")
-    print((space-1) * "-")
+    #Trait 2
+
+    #Colonne 0 (états), invariant
+    ligne_col_0 = (int(space_total) + 3) * char_tiret
+    print(ligne_col_0, end="")
+    print(ligne_rest)
+    ligne_tot = ligne_col_0 + ligne_rest
+    liste_space .append(ligne_tot)
+
+    return liste_space
+
 
 # Fonction permettant d'afficher les automates sous forme de tableau
 def print_automate(liste_symb, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats):
 
-    # Affiche la ligne des symboles
-    print_symb_line(liste_symb)
+    # Affiche la ligne des symboles et initialise la liste des espaces [0]
+    liste_space = print_symb_line(liste_symb, nb_etats)
+
+    space_char = " "
 
     #Nombre
     nb_symb = len(liste_symb)
@@ -48,10 +83,18 @@ def print_automate(liste_symb, liste_etats_initiaux, liste_etats_terminaux, list
 
     # Boucle permettant de créer le bon nombre de ligne et la ligne correspondante à l'état
     for i in range(0, int(nb_etats)):
-        ligne = make_ligne(i, nb_symb, nb_trans, liste_trans,liste_term,liste_init,liste_init_term)
+        ligne = make_ligne(i, nb_symb, nb_trans, liste_trans, liste_term, liste_init, liste_init_term)
         for y in range(len(ligne)):
+            # Initialise une chaine de caractère de l'élément de la liste de la boucle
+            str = ligne[y]
+            # Compte le nombre de caractère de cette chaine
+            nb_char = count_char_str(str)
+
+            print("| ", end=" ")
             print(ligne[y], end=" ")
-        print("\n------------------------------------------\n")
+            print((liste_space[2] - 2 - int(nb_char)) * space_char, end=" ")
+        print("|")
+        print(liste_space[3])
 
 #------------------------------------------------------------------------------------------------------------------------------------QUEL AUTOMATE ILS VEULENT TRAVAILLER---------------------------------------------------------------------------------------
 
