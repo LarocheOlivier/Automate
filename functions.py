@@ -63,7 +63,7 @@ def lire_fichier(x):
     fichier = ""
     if (x == 1):
         fichier = "1-1.txt"
-    elif (x == 1):
+    elif (x == 2):
         fichier = "1-2.txt"
     #Ouvre le fichier correspondant et stock les données dans une liste
     with open(fichier, "r") as f:
@@ -95,7 +95,6 @@ def cutline_liste_etats(nb_etats, line):
     # Liste etats
     liste_etats = []
 
-    print("")
     # Calcul l'indice maximale par rapport au nombre d'états)
     indice_max = 2*int(nb_etats)
 
@@ -134,18 +133,32 @@ def make_ligne(i,nb_symb,nb_trans,liste_trans,liste_term,liste_init,liste_init_t
     ligne = [" "] * int(nb_symb+1)
     # Boucle permettant de parcourir tous les caractères de toutes les transitions
     for a in range(0, nb_trans):
+        liste_nums = get_numbers_trans_av_ap(liste_trans[a])
         # Si le premier caractère correspond à l'état i, alors ajouter l'état correspondant à la transition
-        if int(liste_trans[a][0]) == i:
-            # Donne l'indice correspondant à la lettre de la transition pour la ligne
-            ind = ord(liste_trans[a][1]) - 96
-            # Si l'élément de l'indice est déjà rempli par un état, alors ajouter le caractère
-            if ligne[ind] != " ":
-                chaine = ligne[ind]
-                chaine = chaine + liste_trans[a][2]
-                ligne[ind] = chaine
-            # Sinon, initialiser la valeur à l'indice correspondant de la liste de la ligne
-            else:
-                ligne[ind] = liste_trans[a][2]
+        if i == "i":
+            if str(liste_nums[0]) == i:
+                # Donne l'indice correspondant à la lettre de la transition pour la ligne
+                ind = ord(liste_trans[a][1]) - 96
+                # Si l'élément de l'indice est déjà rempli par un état, alors ajouter le caractère
+                if ligne[ind] != " ":
+                    chaine = ligne[ind]
+                    chaine = chaine + liste_trans[a][2]
+                    ligne[ind] = chaine
+                # Sinon, initialiser la valeur à l'indice correspondant de la liste de la ligne
+                else:
+                    ligne[ind] = liste_trans[a][2]
+        else:
+            if int(liste_nums[0]) == i:
+                # Donne l'indice correspondant à la lettre de la transition pour la ligne
+                ind = ord(liste_trans[a][1]) - 96
+                # Si l'élément de l'indice est déjà rempli par un état, alors ajouter le caractère
+                if ligne[ind] != " ":
+                    chaine = ligne[ind]
+                    chaine = chaine + liste_trans[a][2]
+                    ligne[ind] = chaine
+                # Sinon, initialiser la valeur à l'indice correspondant de la liste de la ligne
+                else:
+                    ligne[ind] = liste_trans[a][2]
     #Permet d'ajouter la/les bonnes lettres à l'état, initial, terminal ou les deux
     #Permet d'initialiser le première indice à l'état associer avec la lettre
     ligne[0] = add_letters(i, liste_term, liste_init, liste_init_term) + str(i)
@@ -161,15 +174,27 @@ def make_ligne(i,nb_symb,nb_trans,liste_trans,liste_term,liste_init,liste_init_t
 #Fonction permettant d'ajouter la/les lettres correspondantes aux éléments d'une liste s'il s'agit d'une entrée, sortie ou les deux
 def add_letters(i,liste_term,liste_init,liste_init_term):
     chaine = ""
-    for k in range(0, len(liste_init)):
-        if int(liste_init[k]) == i:
-            chaine = "E-"
-    for k in range(0, len(liste_term)):
-        if int(liste_term[k]) == i:
-            chaine = "S-"
-    for k in range(0, len(liste_init_term)):
-        if int(liste_init_term[k]) == i:
-            chaine = "S-E-"
+    # Si l'automate est standardisé
+    if i == "i":
+        for k in range(0, len(liste_init)):
+            if liste_init[k] == i:
+                chaine = "E-"
+        for k in range(0, len(liste_term)):
+            if liste_term[k] == i:
+                chaine = "S-"
+        for k in range(0, len(liste_init_term)):
+            if liste_init_term[k] == i:
+                chaine = "S-E-"
+    else:
+        for k in range(0, len(liste_init)):
+            if int(liste_init[k]) == i:
+                chaine = "E-"
+        for k in range(0, len(liste_term)):
+            if int(liste_term[k]) == i:
+                chaine = "S-"
+        for k in range(0, len(liste_init_term)):
+            if int(liste_init_term[k]) == i:
+                chaine = "S-E-"
 
     return chaine
 #---------------------------------------------------------------------------------------------------------------------
@@ -186,3 +211,63 @@ def complementarisation(liste_etat_term,liste_etats):
                 liste_finale.append(liste_etats[i])
 
     return liste_finale
+
+#Fonction  permettant de récupérer TOUS les chiffres d'un état de la liste des transitions
+def get_numbers_trans_av_ap(chaine_trans):
+    liste_finale = []
+    str = ""
+    for i in range(0, len(chaine_trans)):
+        # Vérifie si l'élément est une lettre de "a" à "z" et différent de "i" (standardisation) ou un nombre
+        if chaine_trans[i] > chr(96) and chaine_trans[i] < chr(123) and chaine_trans[i] != chr(105):
+            liste_finale.append(str)
+        else:
+            str = str + chaine_trans[i]
+
+    return liste_finale
+
+#Fonction permettant de retourner une seule et même liste avec toutes les informations nécessaire
+def get_infos(fichier_number):
+    liste_finale = []
+
+    # ----------------------------------------RECUPERATION DES INFORMATIONS DE L'AUTOMATE SOUS FORME DE VARIABLES ET LISTES-----------------
+    # Liste contenant chaque ligne par indice
+    liste_lignes = lire_fichier(fichier_number)
+    nb_lignes = len(liste_lignes)
+
+    # Permet d'obtenir la liste des symboles de l'automate
+    nb_symbs = liste_lignes[0]                                                                              # NB SYMBOLES
+    liste_finale.append(nb_symbs)
+    liste_symbs = liste_symbs_function(nb_symbs)                                                            # LISTE DES SYMBOLES (ALPHABET) DE L'AUTOMATE
+    liste_finale.append(liste_symbs)
+
+    # Permet d'obtenir la liste des états
+    nb_etats = liste_lignes[1]                                                                              # NB ETATS
+    liste_finale.append(nb_etats)
+    liste_etats = liste_etats_function(nb_etats)                                                            # LISTE DES ETATS (de 0 à n) DE L'AUTOMATE
+    liste_finale.append(liste_etats)
+
+    # Liste contenant la ligne des nb et etats initiaux (line initiaux est une liste)
+    line_initiaux = liste_lignes[2]
+    nb_etats_initiaux = line_initiaux[0]                                                                    # NB ETATS INITIAUX
+    liste_finale.append(nb_etats_initiaux)
+    liste_etats_initiaux = cutline_liste_etats(nb_etats_initiaux, line_initiaux)                            # LISTE DES ETATS INITIAUX
+    liste_finale.append(liste_etats_initiaux)
+
+    # Liste contenant la ligne des nb et etats initiaux (line initiaux est une liste)
+    line_terminaux = liste_lignes[3]
+    nb_etats_terminaux = line_terminaux[0]                                                                  # NB ETATS TERMINAUX
+    liste_finale.append(nb_etats_terminaux)
+    liste_etats_terminaux = cutline_liste_etats(nb_etats_terminaux, line_terminaux)                         # LISTE DES ETATS TERMINAUX
+    liste_finale.append(liste_etats_terminaux)
+
+    # Création d'une liste contenant seulement les transitions de l'automate
+    liste_trans = []
+    for i in range(5, nb_lignes):                                                                           # LISTE TRANSITIONS
+        liste_trans.append(liste_lignes[i])
+    liste_finale.append(liste_trans)
+
+    nb_trans = len(liste_trans)                                                                             # NB TRANSITIONS
+    liste_finale.append(nb_trans)
+
+    return liste_finale
+

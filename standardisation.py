@@ -1,30 +1,25 @@
 #Ce fichier permet de standardiser un automate
 
-
-import string
-
-
 #Fonction permettant de vérifier si l'automate est standard ou pas (bool)
 def est_standard(nb_etats_initiaux, nb_trans,liste_etats_initiaux, transitions):
 
 
-    for k in range(int(nb_etats_initiaux) +1):
+    for k in range(int(nb_etats_initiaux) + 1):
 
         #condition sur entrée - plus d'une entrée
-        if len(liste_etats_initiaux[k]) >1:
+        if len(liste_etats_initiaux[k]) > 1:
             return False
 
         #condition sur entrée - si y a pas d'entrée
-        elif len(liste_etats_initiaux[k])==0:
+        elif len(liste_etats_initiaux[k]) == 0:
             return True
 
         else:
             temp = 0
-            for i in range (nb_trans-1):
-                if liste_etats_initiaux[0]==transitions[i][2]:
+            for i in range(nb_trans-1):
+                if liste_etats_initiaux[0] == transitions[i][2]:
                     temp += 1
 
-            print(temp)
             if temp <= 1:
                 return True
             else:

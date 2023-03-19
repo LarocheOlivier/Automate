@@ -1,7 +1,8 @@
 # Ce fichier contient toutes les fonctions d'affichage de ce programme
+import os
 
 from functions import *
-
+from standardisation import *
 
 # Fonction permettant d'afficher le menu principale
 def print_main_menu():
@@ -60,8 +61,8 @@ def print_symb_line(liste_symb,nb_etat):
     return liste_space
 
 
-# Fonction permettant d'afficher les automates sous forme de tableau
-def print_automate(liste_symb, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats):
+# Fonction permettant d'afficher les automates sous forme de tableau (stand == 1 si standardisé et == 0 sinon)
+def print_automate(liste_symb, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats, stand):
 
     # Affiche la ligne des symboles et initialise la liste des espaces [0]
     liste_space = print_symb_line(liste_symb, nb_etats)
@@ -81,75 +82,141 @@ def print_automate(liste_symb, liste_etats_initiaux, liste_etats_terminaux, list
     #Liste contenant les états seulement terminaux
     liste_term = only_init_or_term(liste_etats_terminaux, liste_init_term)
 
-    # Boucle permettant de créer le bon nombre de ligne et la ligne correspondante à l'état
-    for i in range(0, int(nb_etats)):
-        ligne = make_ligne(i, nb_symb, nb_trans, liste_trans, liste_term, liste_init, liste_init_term)
-        for y in range(len(ligne)):
-            # Initialise une chaine de caractère de l'élément de la liste de la boucle
-            str = ligne[y]
-            # Compte le nombre de caractère de cette chaine
-            nb_char = count_char_str(str)
+    #Si on veut afficher un automate standardiser (stand==1)
+    if stand==1:
+        for i in range(0, int(nb_etats)):
+            #Alors si i == 0, remplacer i par "i"
+            if i==0:
+                ligne = make_ligne("i", nb_symb, nb_trans, liste_trans, liste_term, liste_init, liste_init_term)
+                for y in range(len(ligne)):
+                    # Initialise une chaine de caractère de l'élément de la liste de la boucle
+                    str = ligne[y]
+                    # Compte le nombre de caractère de cette chaine
+                    nb_char = count_char_str(str)
 
-            print("| ", end=" ")
-            print(ligne[y], end=" ")
-            print((liste_space[2] - 2 - int(nb_char)) * space_char, end=" ")
-        print("|")
-        print(liste_space[3])
+                    print("| ", end=" ")
+                    print(ligne[y], end=" ")
+                    print((liste_space[2] - 2 - int(nb_char)) * space_char, end=" ")
+                print("|")
+                print(liste_space[3])
+            #S'il ne s'agit pas du première état
+            else:
+                ligne = make_ligne(i, nb_symb, nb_trans, liste_trans, liste_term, liste_init, liste_init_term)
+                for y in range(len(ligne)):
+                    # Initialise une chaine de caractère de l'élément de la liste de la boucle
+                    str = ligne[y]
+                    # Compte le nombre de caractère de cette chaine
+                    nb_char = count_char_str(str)
 
-#------------------------------------------------------------------------------------------------------------------------------------QUEL AUTOMATE ILS VEULENT TRAVAILLER---------------------------------------------------------------------------------------
+                    print("| ", end=" ")
+                    print(ligne[y], end=" ")
+                    print((liste_space[2] - 2 - int(nb_char)) * space_char, end=" ")
+                print("|")
+                print(liste_space[3])
+
+    # S'il ne s'agit pas d'un automate standardisé
+    else:
+        for i in range(0, int(nb_etats)):
+            ligne = make_ligne(i, nb_symb, nb_trans, liste_trans, liste_term, liste_init, liste_init_term)
+            for y in range(len(ligne)):
+                # Initialise une chaine de caractère de l'élément de la liste de la boucle
+                str = ligne[y]
+                # Compte le nombre de caractère de cette chaine
+                nb_char = count_char_str(str)
+
+                print("| ", end=" ")
+                print(ligne[y], end=" ")
+                print((liste_space[2] - 2 - int(nb_char)) * space_char, end=" ")
+            print("|")
+            print(liste_space[3])
+
+def all_process(nb_symbs,liste_symbs,nb_etats,liste_etats,nb_etats_initiaux,liste_etats_initiaux,nb_etats_terminaux,liste_etats_terminaux,liste_trans,nb_trans):
+
+    # Variable permettant d'afficher un automate standardisé, (Si stand == 0, l'automate n'est pas standardisé, sinon stand == 1
+    stand = 0
+
+    print("\nVoici l'automate que vous avez choisi :\n")
+
+    # Affichage de l'automate
+    print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats, stand)
+
+    choice = input("Ce choix vous convient-il ?\nRépondez par Y/N : ")
+
+    # Si l'utilisateur veut changer d'automate
+    if choice == "N":
+        print_main_menu()
+        ch = protect_choix(8)
+        exec_ch_main(ch)
+
+    # Sinon on lance tout pour cet automate
+    else:
+
+        # Vérifie si l'automate est standard
+        info_stand = est_standard(nb_etats_initiaux, nb_trans, liste_etats_initiaux, liste_trans)
+
+        # Si l'automate n'est pas standard
+        while info_stand == False:
+            choice = input("\nCette automate n'est pas standard ! Voulez-vous le standardiser ?\nRépondez par Y/N : ")
+            if choice == "Y":
+                stand = 1
+                print("\nSTANDARDISATION DE L'AUTOMATE EN COURS...\n")
+                liste_standard = standardiser_automate(liste_etats, liste_trans,nb_trans, liste_etats_initiaux, nb_etats_initiaux, liste_etats_terminaux, nb_etats_terminaux)
+                print(liste_standard)
+                liste_etats = liste_standard[0]
+                print(liste_etats)
+                liste_trans = liste_standard[1]
+                print(liste_trans)
+                liste_etats_initiaux = liste_standard[2]
+                print(liste_etats_initiaux)
+                liste_etats_terminaux = liste_standard[3]
+                print(liste_etats_terminaux)
+
+                print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats, stand)
+
+                print("\nCette automate est standard !\n")
+                info_stand = True
+            else:
+                info_stand = True
+        #Si l'automate est déjà standart
+        else:
+
+    # --------------------------------------------Complémentarisation (à la fin)------------------------------------------------
+
+            # Faire la vérification si déterministe et complet
+
+            print("\n\nComplémentarisation :\n")
+
+            # La liste des états initiaux est sous forme de string et nom de int,
+            # la fonction map convertit celle-ci
+            liste_etats_initiaux = list(map(int, liste_etats_initiaux))
+            liste_etats_terminaux = complementarisation(liste_etats_terminaux, liste_etats)
+
+            #Affiche l'automate complémentaire
+            print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats, stand)
+
+    # ----------------------------------------------------------------------------------------------------------------
 
 # Fonction permettant de procéder à la lecture du fichier concerné
 def exec_ch_main(ch):
     if ch == 1:
 
-        #----------------------------------------RECUPERATION DES INFORMATIONS DE L'AUTOMATE SOUS FORME DE VARIABLES ET LISTES----------------------------
-        # Liste contenant chaque ligne par indice
-        liste_lignes = lire_fichier(1)
-        nb_lignes = len(liste_lignes)
+        # Liste infos = [nb_symbs,   liste_symbs,    nb_etats,   liste_etats,    nb_etats_initiaux,  liste_etats_initiaux,   nb_etat_terminaux,  liste_etats_terminaux,  liste_trans,    nb_trans]
+        liste_infos = get_infos(1)
 
-        # Permet d'obtenir la liste des symboles de l'automate
-        nb_symbs = liste_lignes[0]                                                                  # NB SYMBOLES
-        liste_symbs = liste_symbs_function(nb_symbs)                                                # LISTE DES SYMBOLES (ALPHABET) DE L'AUTOMATE
+        # Variable par info
+        nb_symbs = liste_infos[0]
+        liste_symbs = liste_infos[1]
+        nb_etats = liste_infos[2]
+        liste_etats = liste_infos[3]
+        nb_etats_initiaux = liste_infos[4]
+        liste_etats_initiaux = liste_infos[5]
+        nb_etats_terminaux = liste_infos[6]
+        liste_etats_terminaux = liste_infos[7]
+        liste_trans = liste_infos[8]
+        nb_trans = liste_infos[9]
 
-        # Permet d'obtenir la liste des états
-        nb_etats = liste_lignes[1]                                                                  # NB ETATS
-        liste_etats = liste_etats_function(nb_etats)                                                # LISTE DES ETATS (de 0 à n) DE L'AUTOMATE
+        # Effectue tous le processus de l'algorithme
+        all_process(nb_symbs, liste_symbs, nb_etats, liste_etats, nb_etats_initiaux, liste_etats_initiaux, nb_etats_terminaux, liste_etats_terminaux, liste_trans, nb_trans)
 
-        # Liste contenant la ligne des nb et etats initiaux (line initiaux est une liste)
-        line_initiaux = liste_lignes[2]
-        nb_etats_initiaux = line_initiaux[0]                                                         # NB ETATS INITIAUX
-        liste_etats_initiaux = cutline_liste_etats(nb_etats_initiaux, line_initiaux)                 # LISTE DES ETATS INITIAUX
-
-        # Liste contenant la ligne des nb et etats initiaux (line initiaux est une liste)
-        line_terminaux = liste_lignes[3]
-        nb_etats_terminaux = line_terminaux[0]                                                      # NB ETATS TERMINAUX
-        liste_etats_terminaux= cutline_liste_etats(nb_etats_terminaux, line_terminaux)              # LISTE DES ETATS TERMINAUX
-
-        # Création d'une liste contenant seulement les transitions de l'automate
-        liste_trans = []
-        for i in range(5, nb_lignes):                                                               # LISTE TRANSITIONS
-            liste_trans.append(liste_lignes[i])
-
-        nb_trans = len(liste_trans)                                                                 # NB TRANSITIONS
-
-        #-------------------------AFFICHAGE DE L'AUTOMATE----------------------------------------------
-        print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
-
-        #---------------------------Complémentarisation------------------------------------------------
-
-        # Faire la vérification si déterministe et complet
-
-        # COMPLEMENTARISATION DE L'AUTOMATE ET AFFICHAGE
-        # Retourne la liste des états terminaux
-
-        print("Complémentarisation :\n")
-        # La liste des états initiaux est sous forme de string et nom de int,
-        # la fonction map convertit celle-ci
-        liste_etats_initiaux = list(map(int, liste_etats_initiaux))
-        liste_etats_terminaux = complementarisation(liste_etats_terminaux, liste_etats)
-        print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
-
-        #----------------------------------------------------------------------------------------------
-
-        # elif ch == 2 :
+    #elif ch == 2 :
         quit()
