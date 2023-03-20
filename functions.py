@@ -180,8 +180,8 @@ def complementarisation(liste_etat_term,liste_etats):
     liste_finale = []
 
     # Parcours des deux listes, si un état de la liste des états ne se trouve pas dans la liste des états terminaux on ajoute à la liste finale
-    for i in range(0,len(liste_etats)):
-        for j in range(0,len(liste_etat_term)):
+    for i in range(0, len(liste_etats)):
+        for j in range(0, len(liste_etat_term)):
             if liste_etats[i] != int(liste_etat_term[j]):
                 liste_finale.append(liste_etats[i])
 
@@ -194,8 +194,8 @@ def get_numbers_trans_av_ap(chaine_trans):
     liste_finale = []
     str = ""
     for i in range(0, len(chaine_trans)):
-        # Si le caractère se trouve entre "a" et "h"
-        if chaine_trans[i] > chr(96) and chaine_trans[i] < chr(105) or chaine_trans[i] == ".":
+        # Si le caractère se trouve entre "a" et "z" sans le "i" == symbole de l'automate
+        if chaine_trans[i] > chr(96) and chaine_trans[i] < chr(105) or chaine_trans[i] > chr(105) and chaine_trans[i] < chr(123) or chaine_trans[i] == ".":
             liste_finale.append(str)
             str = ""
         else:
