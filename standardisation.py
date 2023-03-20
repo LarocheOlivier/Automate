@@ -57,7 +57,16 @@ def standardiser_automate(liste_etats, liste_trans,nb_trans, liste_etats_initiau
                     liste_trans_std[i-1] = "i" + liste_trans[i-1][1:]
                 else:
                     liste_trans_std[i-1] = liste_trans[i-1][:]
+        
+        
+        l=0
+        for k in range(int(nb_trans)+1):
 
+            for j in range(int(nb_etats_initiaux)):
+                if liste_etats_initiaux[j-1] == liste_trans[k-1][0]:
+                    x = liste_trans[k-1][:]
+                    liste_trans_std.insert(l, x)
+                    
         return liste_etats_std, liste_trans_std, liste_etats_initiaux_std, liste_etats_finaux_std
 
     else:
