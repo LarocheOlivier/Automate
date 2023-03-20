@@ -109,7 +109,7 @@ def liste_init_and_term(liste_init, liste_term):
 
     liste_init_term = []
     for x in liste_init:
-        if x in liste_term:
+        if x in str(liste_term):
             liste_init_term.append(x)
 
     return liste_init_term
@@ -135,30 +135,17 @@ def make_ligne(i,nb_symb,nb_trans,liste_trans,liste_term,liste_init,liste_init_t
     for a in range(0, nb_trans):
         liste_nums = get_numbers_trans_av_ap(liste_trans[a])
         # Si le premier caractère correspond à l'état i, alors ajouter l'état correspondant à la transition
-        if i == "i":
-            if str(liste_nums[0]) == i:
-                # Donne l'indice correspondant à la lettre de la transition pour la ligne
-                ind = ord(liste_trans[a][1]) - 96
-                # Si l'élément de l'indice est déjà rempli par un état, alors ajouter le caractère
-                if ligne[ind] != " ":
-                    chaine = ligne[ind]
-                    chaine = chaine + liste_trans[a][2]
-                    ligne[ind] = chaine
-                # Sinon, initialiser la valeur à l'indice correspondant de la liste de la ligne
-                else:
-                    ligne[ind] = liste_trans[a][2]
-        else:
-            if int(liste_nums[0]) == i:
-                # Donne l'indice correspondant à la lettre de la transition pour la ligne
-                ind = ord(liste_trans[a][1]) - 96
-                # Si l'élément de l'indice est déjà rempli par un état, alors ajouter le caractère
-                if ligne[ind] != " ":
-                    chaine = ligne[ind]
-                    chaine = chaine + liste_trans[a][2]
-                    ligne[ind] = chaine
-                # Sinon, initialiser la valeur à l'indice correspondant de la liste de la ligne
-                else:
-                    ligne[ind] = liste_trans[a][2]
+        if str(liste_nums[0]) == str(i):
+            # Donne l'indice correspondant à la lettre de la transition pour la ligne
+            ind = ord(liste_trans[a][1]) - 96
+            # Si l'élément de l'indice est déjà rempli par un état, alors ajouter le caractère
+            if ligne[ind] != " ":
+                chaine = ligne[ind]
+                chaine = chaine + liste_trans[a][2]
+                ligne[ind] = chaine
+            # Sinon, initialiser la valeur à l'indice correspondant de la liste de la ligne
+            else:
+                ligne[ind] = liste_trans[a][2]
     #Permet d'ajouter la/les bonnes lettres à l'état, initial, terminal ou les deux
     #Permet d'initialiser le première indice à l'état associer avec la lettre
     ligne[0] = add_letters(i, liste_term, liste_init, liste_init_term) + str(i)
@@ -174,27 +161,15 @@ def make_ligne(i,nb_symb,nb_trans,liste_trans,liste_term,liste_init,liste_init_t
 #Fonction permettant d'ajouter la/les lettres correspondantes aux éléments d'une liste s'il s'agit d'une entrée, sortie ou les deux
 def add_letters(i,liste_term,liste_init,liste_init_term):
     chaine = ""
-    # Si l'automate est standardisé
-    if i == "i":
-        for k in range(0, len(liste_init)):
-            if liste_init[k] == i:
-                chaine = "E-"
-        for k in range(0, len(liste_term)):
-            if liste_term[k] == i:
-                chaine = "S-"
-        for k in range(0, len(liste_init_term)):
-            if liste_init_term[k] == i:
-                chaine = "S-E-"
-    else:
-        for k in range(0, len(liste_init)):
-            if int(liste_init[k]) == i:
-                chaine = "E-"
-        for k in range(0, len(liste_term)):
-            if int(liste_term[k]) == i:
-                chaine = "S-"
-        for k in range(0, len(liste_init_term)):
-            if int(liste_init_term[k]) == i:
-                chaine = "S-E-"
+    for k in range(0, len(liste_init)):
+        if str(liste_init[k]) == str(i):
+            chaine = "E-"
+    for k in range(0, len(liste_term)):
+        if str(liste_term[k]) == str(i):
+            chaine = "S-"
+    for k in range(0, len(liste_init_term)):
+        if str(liste_init_term[k]) == str(i):
+            chaine = "S-E-"
 
     return chaine
 #---------------------------------------------------------------------------------------------------------------------
@@ -214,12 +189,15 @@ def complementarisation(liste_etat_term,liste_etats):
 
 #Fonction  permettant de récupérer TOUS les chiffres d'un état de la liste des transitions
 def get_numbers_trans_av_ap(chaine_trans):
+    # Permet de détecter la fin de la chaine
+    chaine_trans = chaine_trans + "."
     liste_finale = []
     str = ""
     for i in range(0, len(chaine_trans)):
-        # Vérifie si l'élément est une lettre de "a" à "z" et différent de "i" (standardisation) ou un nombre
-        if chaine_trans[i] > chr(96) and chaine_trans[i] < chr(123) and chaine_trans[i] != chr(105):
+        # Si le caractère se trouve entre "a" et "h"
+        if chaine_trans[i] > chr(96) and chaine_trans[i] < chr(105) or chaine_trans[i] == ".":
             liste_finale.append(str)
+            str = ""
         else:
             str = str + chaine_trans[i]
 
@@ -268,6 +246,19 @@ def get_infos(fichier_number):
 
     nb_trans = len(liste_trans)                                                                             # NB TRANSITIONS
     liste_finale.append(nb_trans)
+
+    return liste_finale
+
+#Fonction permettant de récupérer tous les états de l'automate
+def get_liste_etats(liste_trans):
+    liste_finale = []
+
+    for i in range(len(liste_trans)):
+        liste_etat = get_numbers_trans_av_ap(liste_trans[i])
+        liste_finale.append(liste_etat[0])
+        liste_finale.append(liste_etat[1])
+
+    liste_finale = list(set(liste_finale))
 
     return liste_finale
 
