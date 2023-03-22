@@ -61,10 +61,7 @@ def stock_automate(txt):
 def lire_fichier(x):
     #Définission de la variable fichier en fonction du numéro de l'automate saisie
     fichier = ""
-    if (x == 1):
-        fichier = "1-1.txt"
-    elif (x == 2):
-        fichier = "1-2.txt"
+    fichier = "1-"+str(x)+".txt"
     #Ouvre le fichier correspondant et stock les données dans une liste
     with open(fichier, "r") as f:
         lines = f.read().split('\n')

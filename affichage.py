@@ -3,6 +3,7 @@ import os
 
 from functions import *
 from standardisation import *
+from déterminisation import *
 
 # Fonction permettant d'afficher le menu principale
 def print_main_menu():
@@ -142,6 +143,33 @@ def all_process(nb_symbs,liste_symbs,nb_etats,liste_etats,nb_etats_initiaux,list
                 info_stand = True
         #Si l'automate est déjà standart
         else:
+
+            #-------------------------------------Déterminisation et Complétion---------------------------------------------------
+
+
+            #--------------------------------------------------------------------------------------------------------------------------
+
+            # Si l'automate n'est pas standard
+            while info_stand == False:
+                choice = input(
+                    "\nCette automate n'est pas standard ! Voulez-vous le standardiser ?\nRépondez par Y/N : ")
+                if choice == "Y":
+                    stand = 1
+                    liste_standard = standardiser_automate(liste_etats, liste_trans, nb_trans, liste_etats_initiaux,
+                                                           nb_etats_initiaux, liste_etats_terminaux, nb_etats_terminaux)
+                    liste_etats = liste_standard[0]
+                    liste_trans = liste_standard[1]
+                    liste_etats_initiaux = liste_standard[2]
+                    liste_etats_terminaux = liste_standard[3]
+
+                    print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
+
+                    print("\nCette automate est standard !\n")
+                    info_stand = True
+                else:
+                    info_stand = True
+
+
 
     # --------------------------------------------Complémentarisation (à la fin)------------------------------------------------
 

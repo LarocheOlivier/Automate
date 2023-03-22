@@ -1,4 +1,6 @@
+
 from functions import*
+
 def est_deterministe(x):
     verif1 = 1
     verif2 = 1
@@ -164,11 +166,13 @@ def get_liste_etats(liste_trans):
     liste_finale = list(set(liste_finale))
 
     return liste_finale
+
 def verif(Etat,Listetransi):
     if Etat in get_liste_etats(Listetransi):
         return 1
     else:
         return 0
+
 def transition(Etat,liste_trans,liste_symbs,Newlist_trans,liste_etat,Liste_temp):
     if verif(Etat,Newlist_trans)==1:
         return Newlist_trans,liste_etat
@@ -198,10 +202,10 @@ def transition(Etat,liste_trans,liste_symbs,Newlist_trans,liste_etat,Liste_temp)
                                         Liste_temp.append(transic)
                                     # Affectation des transitions issu de la nouvelle entrée
 
-        return Newlist_trans,liste_etat
+        return Newlist_trans, liste_etat
 
 
-def déterminisatation(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats):
+def determinisatation(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats):
     # Merge des entrées
         # New liste etats init
         New_Etat_Init = []
@@ -255,13 +259,3 @@ def déterminisatation(liste_symbs, liste_etats_initiaux, liste_etats_terminaux,
         print(Liste_etat)
         print(Newlist_trans)
         return liste_symbs, New_Etat_Init,Liste_Etat_t_f , Newlist_trans, nbetatf
-
-
-
-
-
-
-
-
-
-
