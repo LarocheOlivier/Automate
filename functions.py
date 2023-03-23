@@ -105,9 +105,14 @@ def cutline_liste_etats(nb_etats, line):
 def liste_init_and_term(liste_init, liste_term):
 
     liste_init_term = []
-    for x in liste_init:
-        if x in str(liste_term):
-            liste_init_term.append(x)
+
+    for i in range(0, len(liste_term)):
+        for j in range(0, len(liste_init)):
+            if str(liste_term[i]) == str(liste_init[j]):
+                liste_init_term.append(str(liste_term[i]))
+                liste_init_term.append(str(liste_init[j]))
+
+    liste_init_term = list(set(liste_init_term))
 
     return liste_init_term
 
@@ -134,15 +139,16 @@ def make_ligne(i,nb_symb,nb_trans,liste_trans,liste_term,liste_init,liste_init_t
         # Si le premier caractère correspond à l'état i, alors ajouter l'état correspondant à la transition
         if str(liste_nums[0]) == str(i):
             # Donne l'indice correspondant à la lettre de la transition pour la ligne
-            ind = ord(liste_trans[a][1]) - 96
+            ind = get_only_letter_ind(liste_trans[a])
             # Si l'élément de l'indice est déjà rempli par un état, alors ajouter le caractère
             if ligne[ind] != " ":
                 chaine = ligne[ind]
-                chaine = chaine + liste_trans[a][2]
+                #-----------------------------------------
+                chaine = chaine + liste_nums[1]
                 ligne[ind] = chaine
             # Sinon, initialiser la valeur à l'indice correspondant de la liste de la ligne
             else:
-                ligne[ind] = liste_trans[a][2]
+                ligne[ind] = liste_nums[1]
     #Permet d'ajouter la/les bonnes lettres à l'état, initial, terminal ou les deux
     #Permet d'initialiser le première indice à l'état associer avec la lettre
     ligne[0] = add_letters(i, liste_term, liste_init, liste_init_term) + str(i)
@@ -259,3 +265,11 @@ def get_liste_etats(liste_trans):
 
     return liste_finale
 
+#Récupère seulement la lettre de la transition
+def get_only_letter_ind(str):
+    ind = 0
+    for i in range(0,len(str)):
+        if str[i] > chr(96) and str[i] < chr(105) or str[i] > chr(105) and str[i] < chr(123):
+            ind = ord(str[i]) - 96
+
+    return ind
