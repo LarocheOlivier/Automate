@@ -229,17 +229,12 @@ def all_process(ch,nb_symbs,liste_symbs,nb_etats,liste_etats,nb_etats_initiaux,l
                 exec_ch_main(ch)
 
         #-------------------------------------Déterminisation et Complétion----------------------------------------------------------------------------------------------------------------------
-        #Si l'automate n'est pas complet ET pas déterministe
-        if (est_deterministe(ch) == 2 or est_deterministe(ch) == 3 or est_deterministe(ch) == 4) and est_complet_VF(liste_symbs,liste_trans) == 0 :
+        #Si l'automate n'est pas complet ET pas déterministe (Va déterminiser et compléter
+        if (est_deterministe(ch) == 2 or est_deterministe(ch) == 3 or est_deterministe(ch) == 4):
             print("\nSachant que votre automate n'est pas déterministe ni complet, voici votre automate déterminisé et completé par la suite si besoin :\n")
 
             liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, Newlist_trans, nbetatf = determinisatation(liste_symbs,liste_etats_initiaux,liste_etats_terminaux,liste_trans,nb_etats)
-            #Si en déterminisant il devient complet
-            if est_complet_VF(liste_symbs_f,Newlist_trans) == 0:
-                liste_trans = completion(liste_symbs_f,Newlist_trans)
-                print_automate(liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, liste_trans, nbetatf)
-            else:
-                print_automate(liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, Newlist_trans, nbetatf)
+            print_automate(liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, Newlist_trans, nbetatf)
 
         #Si notre automate est déjà déterministe mais pas complet
         elif est_deterministe(ch) == 1 and est_complet_VF(liste_symbs,liste_trans) == 0 :
@@ -247,16 +242,7 @@ def all_process(ch,nb_symbs,liste_symbs,nb_etats,liste_etats,nb_etats_initiaux,l
 
             liste_trans = completion(liste_symbs, liste_trans)
             print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
-        elif (est_deterministe(ch) == 2 or est_deterministe(ch) == 3 or est_deterministe(ch) == 4) and est_complet_VF(liste_symbs,liste_trans) == 1 :
-            print("\nSachant que votre automate n'est pas déterministe, voici votre automate déterminisé et completé par la suite si besoin :\n")
 
-            liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, Newlist_trans, nbetatf = determinisatation(liste_symbs,liste_etats_initiaux,liste_etats_terminaux,liste_trans,nb_etats)
-            # Si en déterminisant il devient complet
-            if est_complet_VF(liste_symbs_f, Newlist_trans) == 0:
-                liste_trans = completion(liste_symbs_f, Newlist_trans)
-                print_automate(liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, liste_trans, nbetatf)
-            else:
-                print_automate(liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, Newlist_trans, nbetatf)
             #--------------------------------------------------COMPLEMENTAIRE----------------------------------------------------------------------------------------------------------------------
         print("\nComme votre automate était déjà déterministe et complet ou qu'il a été déterminisé et complété si besoin par la suite,\nvous avez la possibilité d'obtenir de language complémentaire,\n")
         choice = input("\nVoulez-vous obtenir l'automate complémentaire ?\nRépondez par Y/N/Q : ")

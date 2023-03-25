@@ -186,19 +186,41 @@ def transition(Etat,liste_trans,liste_symbs,Newlist_trans,liste_etat,Liste_temp)
                                     for r in range(0, len(Listetrans1)):
                                         if Listetrans1[r][1] == liste_symbs[s]:
                                             # Test pour ne pas avoir de doublon
+                                            # Test pour ne pas avoir de doublon
+                                            x = 0
                                             for e in range(0, len(transic)):
                                                 if transic[e] == Listetrans1[r][2]:
-                                                    pass
-                                            transic += Listetrans1[r][2]
-                                    Newlist_trans.append(Etat + liste_symbs[s] + transic)
-                                    if verif(transic,Newlist_trans) == 1:
-                                        liste_etat.append(transic)
-                                    # Affectation des nouveaux états issu de la nouvelle entrée
-                                    else :
-                                        Liste_temp.append(transic)
-                                    # Affectation des transitions issu de la nouvelle entrée
+                                                    x = 1
+                                                    break
+                                            if (x == 0):
+                                                transic += Listetrans1[r][2]
 
-        return Newlist_trans, liste_etat
+                                    if transic == "":
+                                        transic = "P"
+                                        Newlist_trans.append(Etat + liste_symbs[s] + transic)
+                                        if verif(transic, Newlist_trans) == 1:
+
+                                            liste_etat.append(transic)
+                                        # Affectation des nouveaux états issu de la nouvelle entrée
+                                        else:
+                                            Liste_temp.append(transic)
+                                        # Affectation des transitions issu de la nouvelle entrée
+                                    else :
+                                        transic2 = ""
+                                        L = sorted(transic)
+                                        for i in range(len(L)):
+                                            transic2 = transic2 + L[i]
+                                        Newlist_trans.append(Etat + liste_symbs[s] + transic2)
+                                        if verif(transic2, Newlist_trans) == 1:
+
+                                            liste_etat.append(transic2)
+                                        # Affectation des nouveaux états issu de la nouvelle entrée
+                                        else:
+                                            Liste_temp.append(transic2)
+                                        # Affectation des transitions issu de la nouvelle entrée
+
+
+        return Newlist_trans, liste_etat, Liste_temp
 
 
 def determinisatation(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats):
@@ -223,13 +245,20 @@ def determinisatation(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, 
         for s in range(0, len(liste_symbs)):
             transic = ""
             for r in range(0, len(ListtransEntree)):
+                # Si la lettre de la transition est égal au symbole
                 if ListtransEntree[r][1] == liste_symbs[s]:
                     # Test pour ne pas avoir de doublon
+                    x = 0
                     for e in range(0, len(transic)):
                         if transic[e] == ListtransEntree[r][2]:
-                            pass
-                    transic += ListtransEntree[r][2]
+                            x = 1
+                            break
+                    if (x == 0):
+                        transic += ListtransEntree[r][2]
             # Affectation des nouveaux états issu de la nouvelle entrée
+            if transic == "":
+                transic = "P"
+
             Liste_temp.append(transic)
             # Affectation des transitions issu de la nouvelle entrée
             Newlist_trans.append(L + liste_symbs[s] + transic)
@@ -239,7 +268,7 @@ def determinisatation(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, 
                     Liste_temp.pop(i)
                     break
                 else :
-                    Newlist_trans , Liste_etat = transition(Liste_temp[0],liste_trans,liste_symbs,Newlist_trans,Liste_etat,Liste_temp)
+                    Newlist_trans , Liste_etat, Liste_temp = transition(Liste_temp[0],liste_trans,liste_symbs,Newlist_trans,Liste_etat,Liste_temp)
                     break
         Liste_etat = list(set(Liste_etat))
         Liste_Etat_t_f = []
@@ -250,22 +279,9 @@ def determinisatation(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, 
                         Liste_Etat_t_f.append(Liste_etat[r])
         Liste_Etat_t_f = list(set(Liste_Etat_t_f))
         nbetatf = 0
-        Finaltranslist = Newlist_trans
-        Listesymb2 = liste_symbs
-
-
         for c in range(0,len(Liste_etat)):
-            stockletter = []
             nbetatf +=1
-            Listtranstemp = []
-            Listtranstemp = get_liste_trans_etat(Liste_etat[c], Newlist_trans)
-
-        return Listesymb2, New_Etat_Init,Liste_Etat_t_f , Newlist_trans, nbetatf
-
-
-
-
-
+        return liste_symbs, New_Etat_Init,Liste_Etat_t_f , Newlist_trans, nbetatf
 
 def est_complet_VF(Listessymb2, Newlist_trans) :
     lst_symb = Listessymb2
