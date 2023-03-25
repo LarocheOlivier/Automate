@@ -215,7 +215,7 @@ def transition(Etat,liste_trans,liste_symbs,Newlist_trans,liste_etat,Liste_temp)
                                                 transic += Listetrans1[r][2]
                                     # Si le transic ne contient rien alors, remplace par P
                                     if transic == "":
-                                        transic = "P"
+                                        """transic = "P"
                                         # Affectation de la liste des transitions avec la nouvelle
                                         Newlist_trans.append(Etat + liste_symbs[s] + transic)
                                         # si la verif donne 1 alors, n'est pas présent dans la liste des états donc affectation
@@ -226,7 +226,8 @@ def transition(Etat,liste_trans,liste_symbs,Newlist_trans,liste_etat,Liste_temp)
                                         # Sinon l'état va dans la liste temp
                                         else:
                                             Liste_temp.append(transic)
-                                        # Affectation des transitions issu de la nouvelle entrée
+                                        # Affectation des transitions issu de la nouvelle entrée"""
+                                        pass
                                     else :
                                         # Sinon transic2
                                         transic2 = ""
@@ -283,11 +284,29 @@ def determinisatation(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, 
                         transic += ListtransEntree[r][2]
             # Affectation des nouveaux états issu de la nouvelle entrée
             if transic == "":
-                transic = "P"
+                """transic = "P"
+                # Affectation de la liste des transitions avec la nouvelle
+                Newlist_trans.append(Etat + liste_symbs[s] + transic)
+                # si la verif donne 1 alors, n'est pas présent dans la liste des états donc affectation
+                if verif(transic, Newlist_trans) == 1:
 
-            Liste_temp.append(transic)
-            # Affectation des transitions issu de la nouvelle entrée
-            Newlist_trans.append(L + liste_symbs[s] + transic)
+                    liste_etat.append(transic)
+                # Affectation des nouveaux états issu de la nouvelle entrée
+                # Sinon l'état va dans la liste temp
+                else:
+                    Liste_temp.append(transic)
+                # Affectation des transitions issu de la nouvelle entrée"""
+                pass
+            else:
+                # Sinon transic2
+                transic2 = ""
+                L2 = sorted(transic)
+                for i in range(len(L2)):
+                    transic2 = transic2 + L2[i]
+                Newlist_trans.append(L + liste_symbs[s] + transic2)
+                Liste_temp.append(transic2)
+                # Affectation des transitions issu de la nouvelle entrée
+
         while len(Liste_temp) != 0:
             for i in range(0, len(Liste_temp)):
                 if Liste_temp[i] in Liste_etat:
@@ -309,12 +328,14 @@ def determinisatation(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, 
             nbetatf +=1
         return liste_symbs, New_Etat_Init,Liste_Etat_t_f , Newlist_trans, nbetatf
 
-def est_complet_VF(Listessymb2, Newlist_trans) :
+
+def est_complet_VF(Listessymb2, Newlist_trans):
     lst_symb = Listessymb2
     lst_trans = Newlist_trans
+    # print("lst_trans : ", lst_trans)
     verif = 1
     L_element = lst_element_manquantVF(lst_symb, lst_trans)
-    #print("L_element : ", L_element)
+    # print("L_element : ", L_element)
     if (len(L_element) != 0):
         verif = 0
 
@@ -325,38 +346,46 @@ def est_complet_VF(Listessymb2, Newlist_trans) :
 
 
 def completion(Listessymb2, Newlist_trans):
-
     lst_symb = Listessymb2
-    lst_trans =Newlist_trans
+    lst_trans = Newlist_trans
 
-    #if (est_complet_VF(lst_symb, lst_trans) != 0) :
+    # if (est_complet_VF(lst_symb, lst_trans) != 0) :
     l_compl = lst_element_manquantVF(lst_symb, lst_trans)
     lst_etat_P = []
     lst_sec = []
-    for n in range(len(lst_symb)) :
+    for n in range(len(lst_symb)):
         lst_etat_P.append("P" + lst_symb[n] + "P")
-    #print("liste_etat_P : ", lst_etat_P)
-    for m in range(len(l_compl)) :
+    # print("liste_etat_P : ", lst_etat_P)
+
+    for m in range(len(l_compl)):
         l_compl[m] += "P"
-    #print("L_compl_bis : ", l_compl)
+    # print("L_compl_bis : ", l_compl)
 
+    l_compl_final = []
+    for i in range(len(l_compl)):
+        if (l_compl[i] not in l_compl_final):
+            l_compl_final.append(l_compl[i])
 
-    for o in range(len(l_compl)) :
-        lst_sec.append(l_compl[o])
-    #print("Lst_sec : ", lst_sec)
+    for o in range(len(l_compl_final)):
+        lst_sec.append(l_compl_final[o])
+    # print("Lst_sec : ", lst_sec)
 
-    for p in range(len(lst_sec)) :
+    for p in range(len(lst_sec)):
         str = "".join(lst_sec[p])
         lst_trans.append(str)
 
-    for q in range(len(lst_etat_P)) :
+    for q in range(len(lst_etat_P)):
         lst_trans.append(lst_etat_P[q])
+
+    # print("lst_trans: ", lst_trans)
 
     return lst_trans
 
 
 def lst_element_manquantVF(lst_symb, lst_trans):
     # Récupération d'une liste de état via la liste de transition (sans le symbole) : ETAPE 1
+    # print("lst_trans", lst_trans)
+    # print("lst_symb", lst_symb)
     Liste_etat = []
     for a in range(len(lst_symb)):
         Liste_temp = []
@@ -393,16 +422,57 @@ def lst_element_manquantVF(lst_symb, lst_trans):
         str = ''.join(Liste_etat_t[h])
         Liste_etat_dep.append(str)
 
-    # print("Liste_etat : ", Liste_etat)
-    #print("Liste état dep : ", Liste_etat_dep)
+    l_etat_inv = inverse_etats_finaux_to_init(lst_trans)
+    # print("l_etat_inv : ", l_etat_inv)
+    Liste_etat2 = []
+    for a in range(len(lst_symb)):
+        Liste_temp = []
+        # Liste_nv permet de recup toute les transitions pour chaque caractère et les ajouter dans une Liste d'état final
+        Liste_nv = []
+        for b in range(len(l_etat_inv)):
+            Liste_temp2 = []
+            for c in range(len(l_etat_inv[b])):
+                if (lst_symb[a] in l_etat_inv[b]):
+                    if (lst_symb[a] != l_etat_inv[b][c]):
+                        Liste_temp2 += l_etat_inv[b][c]
+                    else:
+                        break
+            Liste_temp.append(Liste_temp2)
+
+        for e in Liste_temp:
+            if e:
+                Liste_nv.append(e)
+
+        Liste_etat2.append(Liste_nv)
+
+    Liste_etat_t2 = []
+    for f in range(len(Liste_etat2)):
+        for g in range(len(Liste_etat2[f])):
+            if (Liste_etat2[f][g] not in Liste_etat_t2):
+                Liste_etat_t2.append(Liste_etat2[f][g])
+        # print("Liste_nv : ", Liste_nv)
+
+    Liste_etat_fin = []
+    for h in range(len(Liste_etat_t2)):
+        str = ''.join(Liste_etat_t2[h])
+        Liste_etat_fin.append(str)
+
+    # print("Liste_etat_fin : ", Liste_etat_fin)
+
+    lst_etat_sum = Liste_etat_dep + Liste_etat_fin
+    # print("lst_etat_sum : ", lst_etat_sum)
+
+    lst_etat_pc = list(set(lst_etat_sum))
+
+    # print("lst_etat_pc : ", lst_etat_pc)
 
     # Ajout des symboles à tous les états qui permettrons la comparaison avec les transition de
     # de la déterminisation, ce qui permettra de récuperer les transition manquante (à compléter)
     lst_var = []
-    for i in range(len(Liste_etat_dep)):
+    for i in range(len(lst_etat_pc)):
         for j in range(len(lst_symb)):
             lst_temp = []
-            lst_temp += Liste_etat_dep[i] + lst_symb[j]
+            lst_temp += lst_etat_pc[i] + lst_symb[j]
             lst_var.append(lst_temp)
 
     # Formation de cette liste de comparaison en str tel que : '013a'
@@ -410,7 +480,7 @@ def lst_element_manquantVF(lst_symb, lst_trans):
     for k in range(len(lst_var)):
         str = "".join(lst_var[k])
         lst_compl.append(str)
-    #print("lst_compl : ", lst_compl)
+    # print("lst_compl : ", lst_compl)
 
     # Copie de l'ETAPE 1 mais en gardant cette fois-ci le symbole (ce qui était génant pour en faire une fonction)
     # Cela permettra de comparer les transitions de la déterminisation par rapport à la liste des état totale précédent
@@ -453,18 +523,70 @@ def lst_element_manquantVF(lst_symb, lst_trans):
         str = ''.join(Liste_Etat_t[h])
         Liste_Etat_Dep.append(str)
 
-    #print("Liste_Etat_Dep : ", Liste_Etat_Dep)
+    # print("Liste_Etat_Dep : ", Liste_Etat_Dep)
 
     # Ajout des états manquants dans une nouvelle liste, laquelle sera ajoutée par la suite au transition de
     # l'automate déterminisé (avec la transition en "P")
     lst_trans_supp = []
 
-
-    for k in range(len(Liste_Etat_Dep)):
-        for l in range(len(lst_compl)):
+    lst_new = []
+    for k in range(len(lst_compl)):
+        l_temp = []
+        for l in range(len(lst_compl[k])):
             if (lst_compl[k] not in Liste_Etat_Dep):
-                lst_trans_supp += lst_compl[k]
+                l_temp += lst_compl[k][l]
+        lst_trans_supp.append(l_temp)
+
+    for e in lst_trans_supp:
+        if e:
+            lst_new.append(e)
+
+    lst_Final = []
+    for m in range(len(lst_new)):
+        str = ''.join(lst_new[m])
+        lst_Final.append(str)
+
+    # print("lst_trans_supp : ", lst_trans_supp)
+    # print("lst_new : ", lst_new)
+    # print("lst_Final : ", lst_Final)
+    return lst_Final
 
 
-    #print("lst_trans_supp : ", lst_trans_supp)
-    return lst_trans_supp
+def inverse_etats_finaux_to_init(liste):
+    # Contient le nombre de lettre fois les états finaux qui vont bien
+    liste_ok = []
+    # Liste finale
+    liste_parfaite = []
+    liste_letter = []
+    liste_letter_without_point = []
+    liste_f = []
+    for o in range(0, len(liste)):
+        # Permet de détecter la fin de la chaine
+        chaine_trans = liste[o] + "."
+        liste_chaine = []
+        str = ""
+        for i in range(0, len(chaine_trans)):
+            # Si le caractère se trouve entre "a" et "z" sans le "i" == symbole de l'automate
+            if chaine_trans[i] > chr(96) and chaine_trans[i] < chr(105) or chaine_trans[i] > chr(105) and chaine_trans[
+                i] < chr(123) or chaine_trans[i] == ".":
+                liste_chaine.append(str)
+                liste_letter.append(chaine_trans[i])
+                str = ""
+            else:
+                str = str + chaine_trans[i]
+
+        liste_f.append(liste_chaine)
+        # print(liste_f)
+
+    for k in range(0, len(liste_letter)):
+        if liste_letter[k] != '.':
+            liste_letter_without_point.append(liste_letter[k])
+
+    # print(liste_letter_without_point)
+    # Parcours liste lettre
+    for k in range(0, len(liste_letter_without_point)):
+        liste_temp_chaine = liste_f[k]
+        char = liste_temp_chaine[1] + liste_letter_without_point[k] + liste_temp_chaine[0]
+        liste_ok.append(char)
+
+    return liste_ok
