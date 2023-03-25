@@ -60,7 +60,7 @@ def stock_automate(txt):
 # Fonction permettant de retourner les informations du fichier voulu
 def lire_fichier(x):
     #Définission de la variable fichier en fonction du numéro de l'automate saisie
-    fichier = "#"+str(x)+".txt"
+    fichier = "Automates/#"+str(x)+".txt"
     #Ouvre le fichier correspondant et stock les données dans une liste
     with open(fichier, "r") as f:
         lines = f.read().split('\n')
