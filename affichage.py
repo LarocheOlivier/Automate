@@ -192,10 +192,25 @@ def all_process(ch,nb_symbs,liste_symbs,nb_etats,liste_etats,nb_etats_initiaux,l
     # Sinon on lance tout pour cet automate
     else:
         next = False
-        choice = input("\nVoulez-vous effectuer un test de reconnaissance de mot sur cet automate ?\nRépondez par Y/N/Q : ")
+        choice = input(
+            "\nVoulez-vous effectuer un test de reconnaissance de mot sur cet automate ?\nRépondez par Y/N/Q : ")
         while next == False:
             if choice == "Y":
-                choix_mot(liste_etats_initiaux,liste_trans,liste_etats_terminaux)
+                choix_mot(liste_etats_initiaux, liste_trans, liste_etats_terminaux)
+                choice2 = input(
+                    "\nVoulez-vous effectuer un autre test de reconnaissance de mot sur cet automate?\nRépondez par Y/N/Q : ")
+                while choice2 == "Y":
+                    choix_mot(liste_etats_initiaux, liste_trans, liste_etats_terminaux)
+                    choice2 = input(
+                        "\nVoulez-vous effectuer un autre test de reconnaissance de mot sur cet automate?\nRépondez par Y/N/Q : ")
+                    if choice2 == "Q":
+                        print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+                        print_main_menu()
+                        ch = protect_choix(39)
+                        exec_ch_main(ch)
+                    elif choice2 == "N":
+                        break
+
                 break
             elif choice == "Q":
                 print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
