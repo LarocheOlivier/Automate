@@ -417,8 +417,7 @@ def lst_element_manquantVF(lst_symb, lst_trans):
     # l'automate déterminisé (avec la transition en "P")
     lst_trans_supp = []
 
-    print(Liste_Etat_Dep)
-    print(lst_compl)
+
     for k in range(len(Liste_Etat_Dep)):
         for l in range(len(lst_compl)):
             if (lst_compl[k] not in Liste_Etat_Dep):
