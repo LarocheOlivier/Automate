@@ -60,8 +60,7 @@ def stock_automate(txt):
 # Fonction permettant de retourner les informations du fichier voulu
 def lire_fichier(x):
     #Définission de la variable fichier en fonction du numéro de l'automate saisie
-    fichier = ""
-    fichier = "1-"+str(x)+".txt"
+    fichier = "#"+str(x)+".txt"
     #Ouvre le fichier correspondant et stock les données dans une liste
     with open(fichier, "r") as f:
         lines = f.read().split('\n')
@@ -177,19 +176,6 @@ def add_letters(i,liste_term,liste_init,liste_init_term):
     return chaine
 #---------------------------------------------------------------------------------------------------------------------
 
-# Retourne la liste qui est la soustraction de la liste des états et la liste des états terminaux
-def complementarisation(liste_etat_term,liste_etats):
-
-    liste_finale = []
-
-    # Parcours des deux listes, si un état de la liste des états ne se trouve pas dans la liste des états terminaux on ajoute à la liste finale
-    for i in range(0, len(liste_etats)):
-        for j in range(0, len(liste_etat_term)):
-            if liste_etats[i] != int(liste_etat_term[j]):
-                liste_finale.append(liste_etats[i])
-
-    return liste_finale
-
 #Fonction  permettant de récupérer TOUS les chiffres d'un état de la liste des transitions
 def get_numbers_trans_av_ap(chaine_trans):
     # Permet de détecter la fin de la chaine
@@ -252,6 +238,16 @@ def get_infos(fichier_number):
 
     return liste_finale
 
+#Fonction permettant de récupérer l'etat le plus grand en caractère de la liste des transitions
+def get_bigger_char(liste_etats):
+
+    bigger = len(liste_etats[0])
+    for i in range(0,len(liste_etats)):
+        if len(liste_etats[i]) > bigger:
+            bigger = len(liste_etats[i])
+
+    return bigger
+
 #Fonction permettant de récupérer tous les états de l'automate
 def get_liste_etats(liste_trans):
     liste_finale = []
@@ -263,7 +259,18 @@ def get_liste_etats(liste_trans):
 
     liste_finale = list(set(liste_finale))
 
+
     return liste_finale
+
+#Fonction permettant de retourner les éléments qui diffèrent entre deux liste
+def discommon_member(liste_init, liste_etat):
+
+    diff_1 = set(liste_etat).difference(set(liste_init))
+    diff_2 = set(liste_init).difference(set(liste_etat))
+
+    list_discommon = list(diff_1.union(diff_2))
+    return list_discommon
+
 
 #Récupère seulement la lettre de la transition
 def get_only_letter_ind(str):

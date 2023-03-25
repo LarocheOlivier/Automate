@@ -8,7 +8,7 @@ def est_deterministe(x):
     #récupération de la liste (automate à déterminisé)
 
     ottomate = lire_fichier(x)
-    print("ottomate", ottomate)
+
 # --------------------------------------------------------------------------------------------------------------------
         # Parcour de la liste automates afin d'y déterminer le nombre d'entrée pour y valider
         # ou non la première contrainte
@@ -22,11 +22,11 @@ def est_deterministe(x):
             # Indices contenant les entrées
             if i == 2 and j == 0 :
                 # Vérification du nombre de sorti pour en déduire l'état de la première contrainte
+                #Pas déterministe
                 if (ottomate[i][j] != "1"):
-                    print("pas déterministe, car plus d'une entrée !")
                     verif1 = 0
+                #Déterministe
                 else :
-                    print("une seule entrée !")
                     verif1 = 1
 
 
@@ -44,7 +44,6 @@ def est_deterministe(x):
                     if (j == 0 or j == 1):
                         Liste_recup += ottomate[i][j]
             Liste_test.append(Liste_recup)
-    print("Liste_test :", Liste_test)
 
 # --------------------------------------------------------------------------------------------------------------------
         # Parcour de la liste précédente (liste raccourci) puis création d'une nouvelle liste 1D
@@ -103,7 +102,6 @@ def est_deterministe(x):
         if (count > 1):
             verif2 = 0
 
-        print("Liste_occ : ", Liste_occ)
         # print(count)
         # print(stop)
 
@@ -113,119 +111,22 @@ def est_deterministe(x):
         # puis de retourner la valeur 1 ou 0 selon si il est déterministe ou non (respectivement)
 # --------------------------------------------------------------------------------------------------------------------
 
+    #Déterministe
     if verif1 == 1 and verif2 == 1 :
-        print("Cet automate est déterministe !")
-        print("\n")
         return 1
+    #Non déterministe,car il y a plusieurs états initiaux !
     if verif1 == 0 and verif2 == 1 :
-        print("Cet n'est pas déterministe, car il y a plusieurs états initiaux !")
-        print("\n")
-        return 0
+        return 2
+    #Cet automate n'est pas déterministe, car il existe plusieurs caractères partant d'une même transition !
     if verif1 == 1 and verif2 == 0 :
-        print("Cet automate n'est pas déterministe, car il existe plusieurs caractères partant d'une même transition !")
-        print("\n")
-        return 0
+        return 3
+    #Cet automate n'est pas déterministe car: Il existe plusieurs états initiaux ! ET Il existe plusieurs caractères partant d'une même transition !:
     if verif1 == 0 and verif2 == 0 :
-        print("Cet automate n'est pas déterministe, car : \n")
-        print("      - Il existe plusieurs états initiaux !")
-        print("      - Il existe plusieurs caractères partant d'une même transition !")
-        print("\n")
-        return 0
-
-
-
-
-
-
-
-#-------------A SUPPRIMER AUSSI---------------
-def est_complet():
-    print("Supp ca aussi stp (enfin modif et réinplémente la fonction qui marche")
-    verif = 1
-    L_element = lst_element_manquant()
-    print("L_element : ", L_element)
-    if (len(L_element) != 0):
-        verif = 0
-
-    if (verif == 0) :
-        print("L'automate n'est pas complet !")
-        return 0
-    else :
-        print("L'automate est complet !")
-        return 1
-
-#--------------------------------------------------------
-
-
-
-# Doit prendre liste symb en para
-
-#-----------A SUPPRIMER------------------
-def completion():
-
-    print("supprime cette merde")
-    # liste_symbs = ["a", "b"]
-    #
-    # L_compl = lst_element_manquant()
-    # print("L_compl : ", L_compl)
-    #
-    # Liste_s = liste_symbs
-    # liste_etas_p = []
-    # for x in range(len(liste_symbs)) :
-    #     liste_etas_p.append("P" + liste_symbs[x] + "P")
-    # print("Liste p : ", liste_etas_p)
-    #
-    #
-    # AF_reduc = []
-    # for i in range(len(AF)):
-    #     L_temp = []
-    #     for j in range(len(AF[i])):
-    #         if i > 4:
-    #             L_temp += AF[i][j]
-    #     if len(L_temp) != 0:
-    #         AF_reduc.append(L_temp)
-    # print("AF_reduc : ", AF_reduc)
-    #
-    #
-    # for a in range(len(L_compl)):
-    #     L_compl[a] += "P"
-    # print("L_compl_bis : ", L_compl)
-    #
-    #
-    # for b in range(len(AF_reduc)) :
-    #     for c in range(len(AF_reduc[b])) :
-    #         for d in range(len(L_compl)) :
-    #             for e in range(len(L_compl[d])) :
-    #                 if c == 0 and e == 0 :
-    #                     if (AF_reduc[b][0] == L_compl[d][0]) :
-    #                         AF_reduc.append(L_compl[d])
-    #
-    #
-    # liste_finale = []
-    # for f in range(0,len(AF_reduc)):
-    #     str = "".join(AF_reduc[f])
-    #     liste_finale.append(str)
-    #
-    # for w in range(len(liste_etas_p)) :
-    #     liste_finale.append(liste_etas_p[w])
-    #
-    #
-    #
-    #
-    # return liste_finale
-
-
+        return 4
 
 
 # Mettre en argument x + refaire la partie avec les symboles
 #--------------------------------------------------------------
-
-def lst_element_manquant():
-    lst = ["1"]
-    print("Suppr ca aussi, je l'ai refait mieux")
-    return lst;
-
-
 
 def get_liste_trans_etat(Etat,liste_transi):
     Liste_final = []
@@ -253,7 +154,7 @@ def get_numbers_trans_av(chaine_trans):
             str = str + chaine_trans[i]
 
     return liste_finale
-def get_liste_etats(liste_trans):
+def get_liste_etats_2(liste_trans):
     liste_finale = []
 
     for i in range(len(liste_trans)):
@@ -265,7 +166,7 @@ def get_liste_etats(liste_trans):
     return liste_finale
 
 def verif(Etat,Listetransi):
-    if Etat in get_liste_etats(Listetransi):
+    if Etat in get_liste_etats_2(Listetransi):
         return 1
     else:
         return 0
@@ -280,7 +181,6 @@ def transition(Etat,liste_trans,liste_symbs,Newlist_trans,liste_etat,Liste_temp)
             for z in range(0, len(liste_trans)):
                         if Etat[x]==liste_trans[z][0]:
                             Listetrans1.append(liste_trans[z])
-            print(Listetrans1)
         for s in range(0, len(liste_symbs)):
                                     transic = ""
                                     for r in range(0, len(Listetrans1)):
@@ -290,7 +190,6 @@ def transition(Etat,liste_trans,liste_symbs,Newlist_trans,liste_etat,Liste_temp)
                                                 if transic[e] == Listetrans1[r][2]:
                                                     pass
                                             transic += Listetrans1[r][2]
-                                    print(transic)
                                     Newlist_trans.append(Etat + liste_symbs[s] + transic)
                                     if verif(transic,Newlist_trans) == 1:
                                         liste_etat.append(transic)
@@ -360,29 +259,6 @@ def determinisatation(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, 
             nbetatf +=1
             Listtranstemp = []
             Listtranstemp = get_liste_trans_etat(Liste_etat[c], Newlist_trans)
-            print(Listtranstemp)
-
-
-            """while len(Listtranstemp)!=0:
-                for i in range(len(liste_symbs)):
-                    for j in range(0,len(Listtranstemp)):
-                        if get_only_letter(Listtranstemp[j]) == liste_symbs[i]:
-                            liste_symbs.pop(j)
-                            break
-                        else :
-                            for z in range(0,len(stockletter)):
-                                if stockletter[z]==liste_symbs[i]:
-                                    break
-                                else:
-                                    stockletter.append(liste_symbs[i])
-                                    break
-
-            for e in range(0, len(stockletter)):
-                    Finaltranslist.append(Liste_etat[c] + stockletter[e] + "P")"""
-
-        print(Finaltranslist)
-
-
 
         return Listesymb2, New_Etat_Init,Liste_Etat_t_f , Newlist_trans, nbetatf
 
@@ -401,47 +277,43 @@ def est_complet_VF(Listessymb2, Newlist_trans) :
         verif = 0
 
     if (verif == 0):
-        return False
+        return 0
     else:
-        return True
+        return 1
 
 
-def completion_deterministe(Listessymb2, Newlist_trans):
+def completion(Listessymb2, Newlist_trans):
 
     lst_symb = Listessymb2
     lst_trans =Newlist_trans
 
-
-    if (est_complet_VF(lst_symb, lst_trans) != 0) :
-        l_compl = lst_element_manquantVF(lst_symb, lst_trans)
-        lst_etat_P = []
-        lst_sec = []
-        for n in range(len(lst_symb)) :
-            lst_etat_P.append("P" + lst_symb[n] + "P")
-        #print("liste_etat_P : ", lst_etat_P)
-
-        for m in range(len(l_compl)) :
-            l_compl[m] += "P"
-        #print("L_compl_bis : ", l_compl)
+    #if (est_complet_VF(lst_symb, lst_trans) != 0) :
+    l_compl = lst_element_manquantVF(lst_symb, lst_trans)
+    lst_etat_P = []
+    lst_sec = []
+    for n in range(len(lst_symb)) :
+        lst_etat_P.append("P" + lst_symb[n] + "P")
+    #print("liste_etat_P : ", lst_etat_P)
+    for m in range(len(l_compl)) :
+        l_compl[m] += "P"
+    #print("L_compl_bis : ", l_compl)
 
 
-        for o in range(len(l_compl)) :
-            lst_sec.append(l_compl[o])
-        #print("Lst_sec : ", lst_sec)
+    for o in range(len(l_compl)) :
+        lst_sec.append(l_compl[o])
+    #print("Lst_sec : ", lst_sec)
 
-        for p in range(len(lst_sec)) :
-            str = "".join(lst_sec[p])
-            lst_trans.append(str)
+    for p in range(len(lst_sec)) :
+        str = "".join(lst_sec[p])
+        lst_trans.append(str)
 
-        for q in range(len(lst_etat_P)) :
-            lst_trans.append(lst_etat_P[q])
+    for q in range(len(lst_etat_P)) :
+        lst_trans.append(lst_etat_P[q])
 
-
-        #print("lst_trans : ", lst_trans)
-        return lst_trans
+    return lst_trans
 
 
-def lst_element_manquantVF(lst_symb, lst_trans) :
+def lst_element_manquantVF(lst_symb, lst_trans):
     # Récupération d'une liste de état via la liste de transition (sans le symbole) : ETAPE 1
     Liste_etat = []
     for a in range(len(lst_symb)):
@@ -544,6 +416,9 @@ def lst_element_manquantVF(lst_symb, lst_trans) :
     # Ajout des états manquants dans une nouvelle liste, laquelle sera ajoutée par la suite au transition de
     # l'automate déterminisé (avec la transition en "P")
     lst_trans_supp = []
+
+    print(Liste_Etat_Dep)
+    print(lst_compl)
     for k in range(len(Liste_Etat_Dep)):
         for l in range(len(lst_compl)):
             if (lst_compl[k] not in Liste_Etat_Dep):
@@ -552,4 +427,3 @@ def lst_element_manquantVF(lst_symb, lst_trans) :
 
     #print("lst_trans_supp : ", lst_trans_supp)
     return lst_trans_supp
-

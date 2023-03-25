@@ -65,6 +65,3 @@ def standardiser_automate(liste_etats, liste_trans, nb_trans, liste_etats_initia
                     liste_trans_std.insert(l, x)
 
         return liste_etats_std, liste_trans_std, liste_etats_initiaux_std, liste_etats_finaux_std
-
-    else:
-        print("Automate déjà standard")

@@ -1,9 +1,10 @@
 # Ce fichier contient toutes les fonctions d'affichage de ce programme
-import os
 
 from functions import *
 from standardisation import *
 from déterminisation import *
+from complementarisation import *
+from reconnaissance_mots import *
 
 # Fonction permettant d'afficher le menu principale
 def print_main_menu():
@@ -18,58 +19,48 @@ def print_main_menu():
 #------------------------------------------------------------------------------------------------------------------------------------FONCTION D'AFFICHAGE D'AUTOMATES-------------------------------------------------------------------------------------------
 
 #Fonction affichant la première ligne du tableau, soit la liste des symboles
-def print_symb_line(liste_symb,nb_etat):
-    nb_symb = len(liste_symb)  # NB SYMBOLES
+def print_symb_line(liste_symb,nb_etat,space_max):
+
+    nb_symb = len(liste_symb)
     char_espace = " "
     char_tiret = "-"
 
-    # Si x = 1, nombre impair sinon pair
-    x = pair_impair(int(nb_etat))
-    # Liste des espaces
-    liste_space = []
+    #Ligne de tiret entre les symboles
+    ligne_rest = int((space_max+1) * (nb_symb)) * char_tiret
+    ligne_rest = ligne_rest + '-'
 
-    space_av = 0
-    space_ap = 0
-    if x == 1:
-        space_av = int((int(nb_etat) / 2 - 0.5) + 2)
-        space_ap = int((int(nb_etat) / 2 - 0.5) + 2)
-    else:
-        space_av = int(int(nb_etat) / 2)
-        space_ap = int((int(nb_etat) / 2) + 2)
-    space_total = space_av + space_ap + 1
-    liste_space.append(space_av)
-    liste_space.append(space_ap)
-    liste_space.append(space_total)
 
-    ligne_rest = int((space_av + space_ap + 4) * nb_symb + 1) * char_tiret
-    # Trait 1
-    print(int((space_av + space_ap + 3)) * char_espace, end=" ")
+    # Trait 1 :
+    print((space_max + 1)  * char_espace, end="")
     print(ligne_rest)
-    print(int((space_av + space_ap + 3)) * char_espace,end=" ")
+
+    #Ligne Symbole :
+    print((space_max + 1)  * char_espace,end="")
 
     for i in range(0, nb_symb):
-        print("|", end=" ")
-        print((liste_space[0] - 1) * char_espace, end=" ")
-        print(liste_symb[i], end=" ")
-        print((liste_space[1] - 1) * char_espace, end=" ")
+        print("| ", end="")
+        print(liste_symb[i], end="")
+        print((space_max - 2) * char_espace, end="")
     print("|")
+
     #Trait 2
+    ligne_tot = ligne_rest + (char_tiret * (space_max + 1))
+    print(ligne_tot)
 
-    #Colonne 0 (états), invariant
-    ligne_col_0 = (int(space_total) + 3) * char_tiret
-    print(ligne_col_0, end="")
-    print(ligne_rest)
-    ligne_tot = ligne_col_0 + ligne_rest
-    liste_space .append(ligne_tot)
-
-    return liste_space
-
+    return ligne_tot
 
 # Fonction permettant d'afficher les automates sous forme de tableau (stand == 1 si standardisé et == 0 sinon)
 def print_automate(liste_symb, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats):
 
-    # Affiche la ligne des symboles et initialise la liste des espaces [0]
-    liste_space = print_symb_line(liste_symb, nb_etats)
+    #Liste des états de l'automate
+    liste_etats = get_liste_etats(liste_trans)
+
+    #Donne le nombre d'espace maximal qu'il faut pour chaque case
+    space_max = get_bigger_char(liste_etats) + 8
+
+    # Affiche la ligne des symboles et renvoie la ligne séparant les états de tirets
+    ligne_tiret_tot = print_symb_line(liste_symb, nb_etats,space_max)
+    space_max -= 1
 
     space_char = " "
 
@@ -86,8 +77,6 @@ def print_automate(liste_symb, liste_etats_initiaux, liste_etats_terminaux, list
     #Liste contenant les états seulement terminaux
     liste_term = only_init_or_term(liste_etats_terminaux, liste_init_term)
 
-    liste_etats = get_liste_etats(liste_trans)
-
     #Si la liste initial n'est pas égal à 0, alors on affiche avant les lignes des états initiaux
     if len(liste_init) != 0:
         #Affiche d'abord les lignes des états initiaux
@@ -99,19 +88,16 @@ def print_automate(liste_symb, liste_etats_initiaux, liste_etats_terminaux, list
                 # Compte le nombre de caractère de cette chaine
                 nb_char = count_char_str(str)
 
-                print("| ", end=" ")
-                print(ligne[y], end=" ")
-                print((liste_space[2] - 2 - int(nb_char)) * space_char, end=" ")
+                print("| ", end="")
+                print(ligne[y], end="")
+                #Pour retirer l'espace en trop
+                space_ap = space_max - nb_char
+                print(space_ap * space_char, end="")
             print("|")
-            print(liste_space[3])
+            print(ligne_tiret_tot)
 
-        liste_etats_without_init = []
-        #Puis ensuite afficher les autres états
-        for i in range (0,len(liste_etats)):
-            for j in range (0,len(liste_init)):
-                if liste_etats[i] != liste_init[j]:
-                    liste_etats_without_init.append(liste_etats[i])
-        liste_etats_without_init = list(set(liste_etats_without_init))
+
+        liste_etats_without_init = discommon_member(liste_init,liste_etats)
 
         for i in range(0, len(liste_etats_without_init)):
             ligne = make_ligne(liste_etats_without_init[i], nb_symb, nb_trans, liste_trans, liste_term, liste_init, liste_init_term)
@@ -121,11 +107,14 @@ def print_automate(liste_symb, liste_etats_initiaux, liste_etats_terminaux, list
                 # Compte le nombre de caractère de cette chaine
                 nb_char = count_char_str(str)
 
-                print("| ", end=" ")
-                print(ligne[y], end=" ")
-                print((liste_space[2] - 2 - int(nb_char)) * space_char, end=" ")
+                print("| ", end="")
+                print(ligne[y], end="")
+                # Pour retirer l'espace en trop
+                space_ap = space_max - nb_char
+                print(space_ap * space_char, end="")
             print("|")
-            print(liste_space[3])
+            print(ligne_tiret_tot)
+
     else:
         #S'il n'y a pas d'état initiaux et que intiaux et terminaux alors...
         for i in range(0, len(liste_etats)):
@@ -137,11 +126,13 @@ def print_automate(liste_symb, liste_etats_initiaux, liste_etats_terminaux, list
                 # Compte le nombre de caractère de cette chaine
                 nb_char = count_char_str(str)
 
-                print("| ", end=" ")
-                print(ligne[y], end=" ")
-                print((liste_space[2] - 2 - int(nb_char)) * space_char, end=" ")
+                print("| ", end="")
+                print(ligne[y], end="")
+                # Pour retirer l'espace en trop
+                space_ap = space_max - nb_char
+                print(space_ap * space_char, end="")
             print("|")
-            print(liste_space[3])
+            print(ligne_tiret_tot)
 #========================================================================================================================================================================
 
 def all_process(ch,nb_symbs,liste_symbs,nb_etats,liste_etats,nb_etats_initiaux,liste_etats_initiaux,nb_etats_terminaux,liste_etats_terminaux,liste_trans,nb_trans):
@@ -154,18 +145,40 @@ def all_process(ch,nb_symbs,liste_symbs,nb_etats,liste_etats,nb_etats_initiaux,l
     # Affichage de l'automate
     print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
 
-    deter = False
-
     # Vérifie si l'automate est standard
     info_stand = est_standard(nb_etats_initiaux, nb_trans, liste_etats_initiaux, liste_trans)
-    if est_deterministe(ch) == 1:
-        deter = True
+    deter = est_deterministe(ch)
+    comp = est_complet_VF(liste_symbs, liste_trans)
+
+    #Phrase standart
+    if info_stand == True:
+        info_stand = "Oui"
+    else:
+        info_stand = "Non"
+
+    #Phrase complet
+    if comp == 0:
+        comp = "Non"
+    else:
+        comp = "Oui"
+
+    #Phrase déterministe
+    if deter == 1:
+        deter = "Oui"
+    elif deter == 2:
+        deter = "Non, car il y a plusieurs états initiaux"
+    elif deter == 3:
+        deter = "Non, car il existe plusieurs états pour un symbole pour au moins une transition"
+    elif deter == 4:
+        deter = "Non, car il y a plusieurs états initiaux et il existe plusieurs états pour un symbole pour au moins une transition"
 
     # Affichage des informations
-    print("Voici les informations liées à cet automate :\n")
+    print("\nVoici les informations liées à cet automate :\n")
     print("Standart : ", info_stand)
     print("Déterministe : ", deter)
-    print("Complet : ",est_complet())
+    print("Complet : ",comp)
+
+    info_stand = est_standard(nb_etats_initiaux, nb_trans, liste_etats_initiaux, liste_trans)
 
     choice = input("\nCe choix vous convient-il ?\nRépondez par Y/N/Q : ")
 
@@ -173,12 +186,24 @@ def all_process(ch,nb_symbs,liste_symbs,nb_etats,liste_etats,nb_etats_initiaux,l
     if choice == "N":
         print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         print_main_menu()
-        ch = protect_choix(8)
+        ch = protect_choix(39)
         exec_ch_main(ch)
 
     # Sinon on lance tout pour cet automate
     else:
-
+        next = False
+        choice = input("\nVoulez-vous effectuer un test de reconnaissance de mot sur cet automate ?\nRépondez par Y/N/Q : ")
+        while next == False:
+            if choice == "Y":
+                choix_mot(liste_etats_initiaux,liste_trans,liste_etats_terminaux)
+                break
+            elif choice == "Q":
+                print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+                print_main_menu()
+                ch = protect_choix(39)
+                exec_ch_main(ch)
+            elif choice == "N":
+                break
         #----------------------------------------------STANDARDISATION--------------------------------------------------------------------------------------------------------------------------
         # Si l'automate n'est pas standard
         while info_stand == False:
@@ -193,7 +218,6 @@ def all_process(ch,nb_symbs,liste_symbs,nb_etats,liste_etats,nb_etats_initiaux,l
 
                 print_automate(liste_symbs, liste_etats_initiaux_stand, liste_etats_terminaux_stand, liste_trans_stand, nb_etats)
 
-                print("\nCet automate est maintenant standard !")
                 info_stand = True
             elif choice == "N":
                 # Si l'automate est déjà standart, on sort de la boucle
@@ -201,54 +225,87 @@ def all_process(ch,nb_symbs,liste_symbs,nb_etats,liste_etats,nb_etats_initiaux,l
             elif choice == "Q":
                 print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
                 print_main_menu()
-                ch = protect_choix(8)
+                ch = protect_choix(39)
                 exec_ch_main(ch)
 
         #-------------------------------------Déterminisation et Complétion----------------------------------------------------------------------------------------------------------------------
-        if est_deterministe(ch) == 0 and est_complet() == 0:
-            choice = input("Sachant que votre automate n'est ni déterministe ni complet, voulez-vous le déterminiser et le compléter ?\nRépondez par Y/N/Q : ")
+        #Si l'automate n'est pas complet ET pas déterministe
+        if (est_deterministe(ch) == 2 or est_deterministe(ch) == 3 or est_deterministe(ch) == 4) and est_complet_VF(liste_symbs,liste_trans) == 0 :
+            print("\nSachant que votre automate n'est pas déterministe ni complet, voici votre automate déterminisé et completé par la suite si besoin :\n")
 
-            #Si l'utilisateur veut déterminiser et compléter l'automate
-            if choice == "Y":
-
-                print("\nVoici votre automate standardisé et complété :\n")
-        # if est_deterministe(ch) == 1:
-        #     if est_complet()==1:
-        #         print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
-        #     else :
-        #         liste_trans = completion(1)
-        #         print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats+1)
-        # else :
-                liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, Newlist_trans, nbetatf = determinisatation(liste_symbs,liste_etats_initiaux,liste_etats_terminaux,liste_trans,nb_etats)
+            liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, Newlist_trans, nbetatf = determinisatation(liste_symbs,liste_etats_initiaux,liste_etats_terminaux,liste_trans,nb_etats)
+            #Si en déterminisant il devient complet
+            if est_complet_VF(liste_symbs_f,Newlist_trans) == 0:
+                liste_trans = completion(liste_symbs_f,Newlist_trans)
+                print_automate(liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, liste_trans, nbetatf)
+            else:
                 print_automate(liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, Newlist_trans, nbetatf)
 
-            elif choice == "N":
-                pass
-            elif choice == "Q":
-                print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-                print_main_menu()
-                ch = protect_choix(8)
-                exec_ch_main(ch)
+        #Si notre automate est déjà déterministe mais pas complet
+        elif est_deterministe(ch) == 1 and est_complet_VF(liste_symbs,liste_trans) == 0 :
+            print("\n Sachant que votre automate est déjà déterministe mais pas complet, voici votre automate complet :\n")
 
-        #--------------------------------------------------COMPLEMENTAIRE----------------------------------------------------------------------------------------------------------------------
-        choice = input("\nVoulez-vous obtenir l'automate complémentaire de l'automate initial ?\nRépondez par Y/N/Q : ")
+            liste_trans = completion(liste_symbs, liste_trans)
+            print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
+        elif (est_deterministe(ch) == 2 or est_deterministe(ch) == 3 or est_deterministe(ch) == 4) and est_complet_VF(liste_symbs,liste_trans) == 1 :
+            print("\nSachant que votre automate n'est pas déterministe, voici votre automate déterminisé et completé par la suite si besoin :\n")
+
+            liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, Newlist_trans, nbetatf = determinisatation(liste_symbs,liste_etats_initiaux,liste_etats_terminaux,liste_trans,nb_etats)
+            # Si en déterminisant il devient complet
+            if est_complet_VF(liste_symbs_f, Newlist_trans) == 0:
+                liste_trans = completion(liste_symbs_f, Newlist_trans)
+                print_automate(liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, liste_trans, nbetatf)
+            else:
+                print_automate(liste_symbs_f, New_Etat_Init, Liste_Etat_t_f, Newlist_trans, nbetatf)
+            #--------------------------------------------------COMPLEMENTAIRE----------------------------------------------------------------------------------------------------------------------
+        print("\nComme votre automate était déjà déterministe et complet ou qu'il a été déterminisé et complété si besoin par la suite,\nvous avez la possibilité d'obtenir de language complémentaire,\n")
+        choice = input("\nVoulez-vous obtenir l'automate complémentaire ?\nRépondez par Y/N/Q : ")
 
         #Si l'utilisateur veut l'automate complémentaire, alors :
         if choice == "Y":
-            print("\nComplémentarisation :\n")
 
-            # La liste des états initiaux est sous forme de string et nom de int,
-            # la fonction map convertit celle-ci
-            liste_etats_terminaux = complementarisation(liste_etats_terminaux, liste_etats)
+            #Si l'automate initial était déjà déterministe et complet
+            if est_deterministe(ch) == 1 and est_complet_VF(liste_symbs,liste_trans) == 1:
+                print("\nComplémentarisation de l'automate initial :\n")
 
-            # Affiche l'automate complémentaire
-            print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
+                liste_etats_terminaux = complementarisation(liste_etats_terminaux, liste_etats)
+
+                # Affiche l'automate complémentaire
+                print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
+
+            #Si l'automate a dû être déterminisé et complété
+            elif (est_deterministe(ch) == 2 or est_deterministe(ch) == 3 or est_deterministe(ch) == 4):
+                print("\nComplémentarisation de l'automate déterminisé et complété :\n")
+
+                #Récupération liste des nouveaux états
+                liste_etats_comp_det = []
+                for i in range(0,len(Newlist_trans)):
+                    liste = get_numbers_trans_av_ap(Newlist_trans[i])
+                    liste_etats_comp_det.append(liste[0])
+                    liste_etats_comp_det.append(liste[1])
+
+                liste_etats_comp_det = list(set(liste_etats_comp_det))
+
+                liste_etats_terminaux = complementarisation(Liste_Etat_t_f, liste_etats_comp_det)
+
+                # Affiche l'automate complémentaire
+                print_automate(liste_symbs_f, New_Etat_Init, liste_etats_terminaux, Newlist_trans, nbetatf)
+
+            #Si notre automate était déjà déterministe mais pas complet
+            elif est_deterministe(ch) == 1 and est_complet_VF(liste_symbs,liste_trans) == 0:
+                print("\nComplémentarisation de l'automate complet :\n")
+
+                liste_etats_terminaux = complementarisation(liste_etats_terminaux, liste_etats)
+
+               # Affiche l'automate complémentaire
+                print_automate(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, liste_trans, nb_etats)
+
 
         #Si l'utilisateur ne veut pas le complémentaire ou quitter, alors retour au menu principale
-        elif choice == "N" or choice == "Q":
+        elif choice == "Q" or choice == "N":
             print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
             print_main_menu()
-            ch = protect_choix(8)
+            ch = protect_choix(39)
             exec_ch_main(ch)
 
 #===============================================================================================================================================================================
@@ -270,5 +327,11 @@ def exec_ch_main(ch):
     liste_trans = liste_infos[8]
     nb_trans = liste_infos[9]
 
-    # Effectue tous le processus de l'algorithme
-    all_process(ch,nb_symbs, liste_symbs, nb_etats, liste_etats, nb_etats_initiaux, liste_etats_initiaux, nb_etats_terminaux, liste_etats_terminaux, liste_trans, nb_trans)
+    if int(nb_symbs)== 0:
+        print("\nCette automate reconnait tous les mots, il est donc impossible d'effectuer quelconque opération, retour au menu principal")
+        print_main_menu()
+        ch = protect_choix(39)
+        exec_ch_main(ch)
+    else:
+        # Effectue tous le processus de l'algorithme
+        all_process(ch,nb_symbs, liste_symbs, nb_etats, liste_etats, nb_etats_initiaux, liste_etats_initiaux, nb_etats_terminaux, liste_etats_terminaux, liste_trans, nb_trans)
