@@ -2,7 +2,7 @@
 
 from affichage import*
 from functions import*
-
+#
 # Vérification Python
 if __name__ == '__main__':
 

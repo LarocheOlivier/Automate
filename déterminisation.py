@@ -1,3 +1,17 @@
+"""-------------------------------------------------------------------------------------------------------------------------------------"""
+"""-------------------------------------------------------------------------------------------------------------------------------------"""
+"""-------------------------------------------------------------------------------------------------------------------------------------"""
+"""-------------------------------------------------------------------------------------------------------------------------------------"""
+
+
+
+"""------------------------------------------------Déterminisation et complétion -------------------------------------------------------"""
+"""-------------------------------------------------------------------------------------------------------------------------------------"""
+"""-------------------------------------------------------------------------------------------------------------------------------------"""
+
+"""-------------------------------------------------------------------------------------------------------------------------------------"""
+
+
 from functions import*
 from affichage import*
 
@@ -166,18 +180,7 @@ def verif(Etat,Listetransi):
     else:
         return 0
 
-"""-------------------------------------------------------------------------------------------------------------------------------------"""
-"""-------------------------------------------------------------------------------------------------------------------------------------"""
-"""-------------------------------------------------------------------------------------------------------------------------------------"""
-"""-------------------------------------------------------------------------------------------------------------------------------------"""
 
-
-
-"""------------------------------------------------Déterminisation et complétion -------------------------------------------------------"""
-"""-------------------------------------------------------------------------------------------------------------------------------------"""
-"""-------------------------------------------------------------------------------------------------------------------------------------"""
-
-"""-------------------------------------------------------------------------------------------------------------------------------------"""
 
 #Fonction qui va faire les transitions d'un état et qui va renvoyer la liste des transitions, la liste des états, et la liste des états temporaires à jour
 def transition(Etat,liste_trans,liste_symbs,Newlist_trans,liste_etat,Liste_temp):
@@ -215,7 +218,7 @@ def transition(Etat,liste_trans,liste_symbs,Newlist_trans,liste_etat,Liste_temp)
                                                 transic += Listetrans1[r][2]
                                     # Si le transic ne contient rien alors, remplace par P
                                     if transic == "":
-                                        transic = "P"
+                                        """transic = "P"
                                         # Affectation de la liste des transitions avec la nouvelle
                                         Newlist_trans.append(Etat + liste_symbs[s] + transic)
                                         # si la verif donne 1 alors, n'est pas présent dans la liste des états donc affectation
@@ -226,7 +229,8 @@ def transition(Etat,liste_trans,liste_symbs,Newlist_trans,liste_etat,Liste_temp)
                                         # Sinon l'état va dans la liste temp
                                         else:
                                             Liste_temp.append(transic)
-                                        # Affectation des transitions issu de la nouvelle entrée
+                                        # Affectation des transitions issu de la nouvelle entrée"""
+                                        pass
                                     else :
                                         # Sinon transic2
                                         transic2 = ""
@@ -283,11 +287,29 @@ def determinisatation(liste_symbs, liste_etats_initiaux, liste_etats_terminaux, 
                         transic += ListtransEntree[r][2]
             # Affectation des nouveaux états issu de la nouvelle entrée
             if transic == "":
-                transic = "P"
+                """transic = "P"
+                # Affectation de la liste des transitions avec la nouvelle
+                Newlist_trans.append(Etat + liste_symbs[s] + transic)
+                # si la verif donne 1 alors, n'est pas présent dans la liste des états donc affectation
+                if verif(transic, Newlist_trans) == 1:
 
-            Liste_temp.append(transic)
-            # Affectation des transitions issu de la nouvelle entrée
-            Newlist_trans.append(L + liste_symbs[s] + transic)
+                    liste_etat.append(transic)
+                # Affectation des nouveaux états issu de la nouvelle entrée
+                # Sinon l'état va dans la liste temp
+                else:
+                    Liste_temp.append(transic)
+                # Affectation des transitions issu de la nouvelle entrée"""
+                pass
+            else:
+                # Sinon transic2
+                transic2 = ""
+                L2 = sorted(transic)
+                for i in range(len(L2)):
+                    transic2 = transic2 + L2[i]
+                Newlist_trans.append(L + liste_symbs[s] + transic2)
+                Liste_temp.append(transic2)
+                # Affectation des transitions issu de la nouvelle entrée
+
         while len(Liste_temp) != 0:
             for i in range(0, len(Liste_temp)):
                 if Liste_temp[i] in Liste_etat:
