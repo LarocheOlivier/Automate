@@ -8,10 +8,10 @@
 1b3
 2a2
 2b3
-3ap
-3bp
-pap
-pbp
-4ap
-4bp
+3aP
+3bP
+PaP
+PbP
+4aP
+4bP
 0b4

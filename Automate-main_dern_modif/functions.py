@@ -189,7 +189,6 @@ def get_numbers_trans_av_ap(chaine_trans):
             str = ""
         else:
             str = str + chaine_trans[i]
-
     return liste_finale
 
 #Fonction permettant de retourner une seule et même liste avec toutes les informations nécessaire
